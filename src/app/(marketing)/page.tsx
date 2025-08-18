@@ -1,5 +1,3 @@
-import Image from "next/image";
-import { Button } from "@/components/ui/button";
 import { Hero } from "@/components/marketing";
 import { CardCourse } from "@/components/shared";
 export default function Home() {
