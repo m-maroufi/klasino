@@ -1,21 +1,38 @@
 import { Hero } from "@/components/marketing";
-import { CardCourse } from "@/components/shared";
+import NewCourse from "@/components/marketing/Home/NewCourse";
+import Services from "@/components/marketing/Home/Services";
+import Offer from "@/components/marketing/widget/Offer";
+import { TitleSection } from "@/components/shared";
+
 export default function Home() {
   return (
     <section className="">
       <Hero />
-      <section className="new-courses -mt-28 z-30 relative">
+      <main className=" space-y-10 -mt-28 z-30 relative">
         <div className="container">
-          <h1 className="scroll-m-20text-xl md:text-2xl font-extrabold tracking-tight text-balance mb-8">
-            جدید ترین دوره ها
-          </h1>
-          <div className="corsers-list py-5 gap-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3">
-            <CardCourse />
-            <CardCourse />
-            <CardCourse />
+          <TitleSection
+            title="جدید ترین دوره ها"
+            link={{ href: "/course", text: "مشاهده بیشتر" }}
+          />
+          <div className="">
+            <NewCourse />
           </div>
         </div>
-      </section>
+        <div className="container">
+          <TitleSection
+            title="دوره های برگزار شده"
+            link={{ href: "/course", text: "مشاهده بیشتر" }}
+          />
+          <div className="">
+            <NewCourse />
+          </div>
+        </div>
+        {/* offer section */}
+        <Offer />
+        <div className="container">
+          <Services />
+        </div>
+      </main>
     </section>
   );
 }
