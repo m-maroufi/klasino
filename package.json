@@ -9,12 +9,6 @@
     "start": "next start",
     "lint": "next lint"
   },
-  "lint-staged": {
-    "*.{ts,tsx,js,jsx}": [
-      "eslint --fix",
-      "git add"
-    ]
-  },
   "dependencies": {
     "@base-ui-components/react": "1.0.0-beta.2",
     "@radix-ui/react-dialog": "^1.1.15",
