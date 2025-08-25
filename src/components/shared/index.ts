@@ -1,3 +1,4 @@
+export { default as BreadcrumbsLinks } from "./BreadcrumbsLinks";
 export { CardCourse } from "./CardCorse";
 export { CardCourseSklaton } from "./CardCourseSklaton";
 export { OfferCode } from "./OfferCode";

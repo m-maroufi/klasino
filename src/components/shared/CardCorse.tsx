@@ -27,7 +27,7 @@ export function CardCourse() {
               <span> 2,400,000 </span>
               تومان
             </span>
-            <Button>افزودن به سبد خرید</Button>
+            <Button>شرکت در دوره</Button>
           </div>
         </div>
       </div>

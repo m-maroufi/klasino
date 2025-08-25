@@ -28,7 +28,7 @@ const Navbar = () => {
         </NavigationMenuItem>
         <NavigationMenuItem>
           <NavigationMenuLink asChild className={navigationMenuTriggerStyle()}>
-            <Link href="/">دوره ها</Link>
+            <Link href="/course">دوره ها</Link>
           </NavigationMenuLink>
         </NavigationMenuItem>
       </NavigationMenuList>
