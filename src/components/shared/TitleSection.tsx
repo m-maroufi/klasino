@@ -1,7 +1,6 @@
-import React from "react";
-import { Button } from "../ui/button";
-import Link from "next/link";
 import { SquareArrowOutUpRight } from "lucide-react";
+import Link from "next/link";
+import { Button } from "../ui/button";
 
 type TitleSectionProps = {
   title: string;
