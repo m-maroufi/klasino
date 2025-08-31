@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import "./globals.css";
-
 export const metadata: Metadata = {
   title: "کلاسینو",
   description: "کلاسینو - کلبه آنلاین یادگیری برنامه نویسی",
@@ -13,7 +12,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`antialiased`}>{children}</body>
+      <body className={`antialiased `}>{children}</body>
     </html>
   );
 }
