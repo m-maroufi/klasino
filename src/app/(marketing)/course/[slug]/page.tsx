@@ -103,7 +103,7 @@ export default function CourseDetailsPage() {
                 درحال برگزاری
               </Badge>
             </div>
-            <div className="content_html font-vazir">
+            <div className="content_html font-vazir font-normal ">
               اگر شما هم قصد یادگیری زبان همه کاره پایتون را دارید، مسیر درستی
               را انتخاب کرده اید. فرقی نمی کند که ابتدای راه باشید یا نیمه های
               مسیر، دوره آموزش پایتون (python) یک تجربه یادگیری گام به گام را

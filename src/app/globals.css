@@ -7,12 +7,7 @@
   font-style: normal;
   font-display: swap;
 }
-@font-face {
-  font-family: "Vazirmatn";
-  src: url("/fonts/vazir/Vazirmatn-var.woff2") format("woff2");
-  font-style: normal;
-  font-display: swap;
-}
+
 @custom-variant dark (&:is(.dark *));
 
 @theme inline {
@@ -54,12 +49,11 @@
   --radius-lg: var(--radius);
   --radius-xl: calc(var(--radius) + 4px);
   /* fonts */
-  --font-vazir: var(--vazirmtn);
+  --font-vazir: var(--vazir-font);
   --font-mikhak: var(--mikhak);
 }
 :root {
   --mikhak: "mikhak", "sans-srif";
-  --vazirmtn: "Vazirmatn";
   --radius: 0.625rem;
   --card: oklch(1 0 0);
   --card-foreground: oklch(0.145 0 0);
@@ -92,6 +86,7 @@
   --sidebar-ring: oklch(0.708 0 0);
   --background: oklch(1 0 0);
   --foreground: oklch(0.145 0 0);
+  --vazir-font: var(--vazir);
 }
 .dark {
   --background: oklch(0.145 0 0);
