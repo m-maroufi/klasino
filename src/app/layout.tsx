@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Vazirmatn } from "next/font/google";
+import { Toaster } from "sonner";
 import "./globals.css";
 export const metadata: Metadata = {
   title: "کلاسینو",
@@ -19,7 +20,10 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className={`${vazir.variable}`}>
-      <body className={`antialiased `}>{children}</body>
+      <body className={`antialiased `}>
+        {children}
+        <Toaster position="top-center" dir="rtl" />
+      </body>
     </html>
   );
 }
