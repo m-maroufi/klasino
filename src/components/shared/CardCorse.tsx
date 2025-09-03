@@ -1,13 +1,25 @@
 import { Button } from "@/components/ui/button";
+import { formatPrice } from "@/lib/helper";
 import Link from "next/link";
+type Props = {
+  course: {
+    courseId: string;
+    title: string;
+    slug: string;
+    thumbnailUrl: string | null;
+    price: number | null;
+    isPublished: boolean;
+    instructorName: string | null;
+  };
+};
 
-export function CardCourse() {
+export function CardCourse({ course }: Props) {
   return (
     <div className="w-full max-w-md mx-auto">
       <div className="bg-white rounded-lg shadow-lg overflow-hidden transition-all duration-300 hover:shadow-xl dark:bg-gray-950">
-        <Link href={"/"}>
+        <Link href={"/course/" + course.slug}>
           <img
-            src="/placeholder.png"
+            src={course.thumbnailUrl || "/placeholder.png"}
             alt="Product Image"
             width={600}
             height={400}
@@ -16,15 +28,15 @@ export function CardCourse() {
           />
         </Link>
         <div className="p-4 space-y-2">
-          <Link href={"/"}>
-            <h3 className="text-xl font-semibold">دوره تلویند</h3>
+          <Link href={"/course/" + course.slug}>
+            <h3 className="text-xl font-semibold"> {course.title}</h3>
           </Link>
           <p className="text-gray-500 dark:text-gray-400">
-            مدرس : <span> مجید حیدری</span>
+            مدرس : <span> {course.instructorName}</span>
           </p>
           <div className="flex items-center justify-between">
             <span className="text-lg font-bold">
-              <span> 2,400,000 </span>
+              <span> {formatPrice(course.price)} </span>
               تومان
             </span>
             <Button>شرکت در دوره</Button>

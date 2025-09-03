@@ -1,6 +1,7 @@
 import AsideSection from "@/components/marketing/Course/AsideSection";
 import CommentsTab from "@/components/marketing/Course/CommentsTab";
 import Tags from "@/components/marketing/Course/Tags";
+import { CourseStatusBadge } from "@/components/marketing/widget/CourseStatusBadge";
 import PaymentButton from "@/components/marketing/widget/PaymentButton";
 import { BreadcrumbsLinks } from "@/components/shared";
 import {
@@ -13,44 +14,38 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { getCourseBySlug } from "@/db/queries";
+
 import {
   BookOpenText,
   DownloadCloud,
-  Loader2,
   MessageCircleCode,
   Play,
   Timer,
 } from "lucide-react";
 
-export default function CourseDetailsPage() {
+type Props = {
+  params: Promise<{ slug: string }>;
+};
+
+export default async function CourseDetailsPage({ params }: Props) {
+  const { slug } = await params;
+  // Fetch course details using the slug if needed
+  const course = await getCourseBySlug(slug);
+  console.log("course:", course);
   return (
     <main className="min-h-screen mt-20">
       <section className="container">
         <BreadcrumbsLinks />
         <section className="wrapper flex flex-col md:flex-row gap-4">
-          <AsideSection />
+          <AsideSection course={course} />
           <section className="Content order-2 md:order-2 w-full md:w-2/3 p-4">
             <div className="head hidden md:block">
-              <h3 className="font-semibold text-xl">
-                آموزش رایگان پایتون (python) - از مقدماتی تا پیشرفته
-              </h3>
-              <Badge
-                variant="secondary"
-                className="bg-green-500/50 my-4 text-green-800 dark:bg-green-500"
-              >
-                <Loader2 />
-                درحال برگزاری
-              </Badge>
+              <h3 className="font-semibold text-xl">{course.title}</h3>
+              <CourseStatusBadge status={course.status} />
             </div>
             <div className="content_html font-vazir font-normal text-gray-600">
-              اگر شما هم قصد یادگیری زبان همه کاره پایتون را دارید، مسیر درستی
-              را انتخاب کرده اید. فرقی نمی کند که ابتدای راه باشید یا نیمه های
-              مسیر، دوره آموزش پایتون (python) یک تجربه یادگیری گام به گام را
-              ارائه می دهد که هم مفاهیم پایه و هم مفاهیم پیشرفته را پوشش می دهد.
-              در این راهنمای جامع، ما به بررسی چیستی پایتون، کاربرد های آن،
-              ویژگی ‌های کلیدی، پیش نیاز ها، بازار کار، مهارت‌ های تکمیلی، آینده
-              پایتون و ... خواهیم پرداخت. در طول دوره نیز، پروژه‌ هایی عملی برای
-              تقویت مهارت‌ های شما ارائه می شود.
+              {course.description}
             </div>
             <Separator className="my-4" />
             <Tabs

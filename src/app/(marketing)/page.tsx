@@ -3,6 +3,8 @@ import NewCourse from "@/components/marketing/Home/NewCourse";
 import Services from "@/components/marketing/Home/Services";
 import Offer from "@/components/marketing/widget/Offer";
 import { TitleSection } from "@/components/shared";
+import SkletonLoadingSection from "@/components/shared/SkletonLoadingSection";
+import { Suspense } from "react";
 
 export default function Home() {
   return (
@@ -14,9 +16,9 @@ export default function Home() {
             title="جدید ترین دوره ها"
             link={{ href: "/course", text: "مشاهده بیشتر" }}
           />
-          <div className="">
-            <NewCourse />
-          </div>
+          <Suspense fallback={<SkletonLoadingSection />}>
+            <NewCourse limit={6} />
+          </Suspense>
         </div>
         <div className="container">
           <TitleSection
@@ -24,7 +26,9 @@ export default function Home() {
             link={{ href: "/course", text: "مشاهده بیشتر" }}
           />
           <div className="">
-            <NewCourse />
+            <Suspense fallback={<SkletonLoadingSection />}>
+              <NewCourse limit={20} />
+            </Suspense>
           </div>
         </div>
         {/* offer section */}
