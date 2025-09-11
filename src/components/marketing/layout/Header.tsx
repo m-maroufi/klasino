@@ -83,7 +83,7 @@ export const Header = () => {
                 <LucideShoppingBag />
               </Button>
               <Button asChild>
-                <Link href={"/login"}>ورود</Link>
+                <Link href={"/sign-in"}>ورود</Link>
               </Button>
             </section>
           </div>
