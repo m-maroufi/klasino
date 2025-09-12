@@ -1,6 +1,6 @@
 "use client";
 
-import { singUpFormSchema } from "@/lib/validator.shema";
+import { signInFormSchema } from "@/lib/validator.shema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
   EyeIcon,
@@ -8,7 +8,6 @@ import {
   HomeIcon,
   LockIcon,
   MailIcon,
-  User,
 } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
@@ -31,37 +30,40 @@ import {
   FormLabel,
   FormMessage,
 } from "../ui/form";
-import { Tooltip, TooltipProvider, TooltipTrigger } from "../ui/tooltip";
-import { TooltipContent } from "@radix-ui/react-tooltip";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "../ui/tooltip";
 
-const SignUpForm = () => {
+const SignInForm = () => {
   const [showPassword, setShowPassword] = useState(false);
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);
   };
-  const form = useForm<z.infer<typeof singUpFormSchema>>({
-    resolver: zodResolver(singUpFormSchema),
+  const form = useForm<z.infer<typeof signInFormSchema>>({
+    resolver: zodResolver(signInFormSchema),
     reValidateMode: "onSubmit",
     mode: "onTouched",
     defaultValues: {
-      name: "",
       email: "",
       password: "",
     },
   });
 
-  const signUpHandler = (data: z.infer<typeof singUpFormSchema>) => {
+  const signInHandler = (data: z.infer<typeof signInFormSchema>) => {
     console.log(data);
   };
 
   return (
     <Card className="max-w-md w-full mx-auto">
-      <CardHeader className="relative">
+      <CardHeader className=" relative">
         <CardTitle>
-          <h2>ایجاد حساب کاربری</h2>
+          <h2>ورود به حساب</h2>
         </CardTitle>
         <CardDescription>
-          لطفاً اطلاعات خود را وارد کنید تا یک حساب کاربری جدید ایجاد کنید.
+          لطفا ایمیل و کلمه عبور خود را وارد کنید
         </CardDescription>
         <TooltipProvider>
           <Tooltip>
@@ -82,29 +84,9 @@ const SignUpForm = () => {
       <CardContent>
         <Form {...form}>
           <form
-            onSubmit={form.handleSubmit(signUpHandler)}
+            onSubmit={form.handleSubmit(signInHandler)}
             className="space-y-4"
           >
-            <FormField
-              control={form.control}
-              name="name"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>نام و نام خانوادگی</FormLabel>
-                  <FormControl>
-                    <div className="relative flex items-center rounded-md border focus-within:ring-1 focus-within:ring-ring pr-2">
-                      <User className="h-5 w-5 text-muted-foreground" />
-                      <Input
-                        className="border-0 focus-visible:ring-0 shadow-none"
-                        placeholder="مثلا : محمد احمدی"
-                        {...field}
-                      />
-                    </div>
-                  </FormControl>
-                  <FormMessage className="text-xs" />
-                </FormItem>
-              )}
-            />
             <FormField
               control={form.control}
               name="email"
@@ -137,8 +119,8 @@ const SignUpForm = () => {
                       <Input
                         {...field}
                         type={showPassword ? "text" : "password"}
-                        placeholder="حداقل 6 کاراکتر"
-                        className="border-0 focus-visible:ring-0 shadow-none font-black placeholder:font-light"
+                        placeholder="کلمه عبور خود را وارد کنید"
+                        className="border-0 focus-visible:ring-0 shadow-none"
                       />
                       <button type="button" onClick={togglePasswordVisibility}>
                         {showPassword ? (
@@ -160,12 +142,12 @@ const SignUpForm = () => {
             </div>
             <div>
               <p className="text-center text-sm text-gray-500">
-                قبلاً حساب کاربری ساخته‌اید؟{" "}
+                حساب کاربری ندارید؟{" "}
                 <Link
-                  href="/sign-in"
+                  href="/sign-up"
                   className="text-blue-500 hover:underline hover:text-blue-600"
                 >
-                  وارد شوید
+                  ایحاد حساب کاربری
                 </Link>
               </p>
             </div>
@@ -176,4 +158,4 @@ const SignUpForm = () => {
   );
 };
 
-export default SignUpForm;
+export default SignInForm;

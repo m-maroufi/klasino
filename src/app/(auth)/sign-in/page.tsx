@@ -1,9 +1,9 @@
-import SignUpForm from "@/components/auth/SignUpForm";
+import SignInForm from "@/components/auth/SignInForm";
 
 export default function SignInPage() {
   return (
     <div className="form-wrapper container ">
-      <SignUpForm />
+      <SignInForm />
     </div>
   );
 }
