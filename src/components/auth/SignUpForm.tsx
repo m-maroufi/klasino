@@ -1,11 +1,14 @@
 "use client";
 
+import { signUp } from "@/actions/auth-actions";
 import { singUpFormSchema } from "@/lib/validator.shema";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { TooltipContent } from "@radix-ui/react-tooltip";
 import {
   EyeIcon,
   EyeOffIcon,
   HomeIcon,
+  Loader,
   LockIcon,
   MailIcon,
   User,
@@ -13,6 +16,7 @@ import {
 import Link from "next/link";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
+import { toast } from "sonner";
 import z from "zod";
 import { Input } from "../ui/base-input";
 import { Button } from "../ui/button";
@@ -32,9 +36,10 @@ import {
   FormMessage,
 } from "../ui/form";
 import { Tooltip, TooltipProvider, TooltipTrigger } from "../ui/tooltip";
-import { TooltipContent } from "@radix-ui/react-tooltip";
+import { useRouter } from "next/navigation";
 
 const SignUpForm = () => {
+  const router = useRouter();
   const [showPassword, setShowPassword] = useState(false);
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);
@@ -50,8 +55,25 @@ const SignUpForm = () => {
     },
   });
 
-  const signUpHandler = (data: z.infer<typeof singUpFormSchema>) => {
-    console.log(data);
+  const signUpHandler = async (data: z.infer<typeof singUpFormSchema>) => {
+    const { name, email, password } = data;
+    try {
+      const result = await signUp(name, email, password);
+      if (!result.user) {
+        form.setError("root", {
+          message: "مشکلی در ایجاد حساب به وجود آمد.",
+        });
+        return false;
+      }
+      toast.success("ثبت نام با موفقیت انجام شد 🎉😍", {
+        richColors: true,
+      });
+      router.push("/");
+    } catch (error) {
+      form.setError("root", {
+        message: "مشکلی در اتصال بوجود آمد.",
+      });
+    }
   };
 
   return (
@@ -154,9 +176,27 @@ const SignUpForm = () => {
               )}
             />
             <div className="pt-4">
-              <Button className="w-full " type="submit">
-                <span className="text-sm">ثبت نام</span>
+              <Button
+                className="w-full "
+                type="submit"
+                disabled={
+                  form.formState.isSubmitting || form.formState.isLoading
+                }
+              >
+                {form.formState.isSubmitting || form.formState.isLoading ? (
+                  <>
+                    {" "}
+                    <Loader className="animate-spin" /> کمی صبر کنید ...
+                  </>
+                ) : (
+                  <span className="text-sm">ثبت نام</span>
+                )}
               </Button>
+              <div className="root_error text-red-500 py-5 text-sm">
+                {form.formState?.errors?.root && (
+                  <>{form.formState.errors.root?.message}</>
+                )}
+              </div>
             </div>
             <div>
               <p className="text-center text-sm text-gray-500">

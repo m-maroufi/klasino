@@ -1,10 +1,19 @@
+import { auth } from "@/lib/auth";
+import { headers } from "next/headers";
 import Link from "next/link";
+import { redirect } from "next/navigation";
 
-export default function AuthLayout({
+export default async function AuthLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const sesseion = await auth.api.getSession({
+    headers: await headers(),
+  });
+  if (sesseion) {
+    redirect("/");
+  }
   return (
     <section className="flex min-h-screen flex-col items-center justify-center bg-gray-50 px-0 py-7 lg:px-8 relative overflow-hidden">
       <div

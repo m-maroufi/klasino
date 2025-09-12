@@ -10,13 +10,15 @@ import {
   SheetTitle,
 } from "@/components/ui/sheet";
 import { useMediaQuery } from "@/hooks/useMediaQuerys";
+import { Session } from "@/lib/auth";
 import { LucideMenuSquare, LucideShoppingBag } from "lucide-react";
 import { motion } from "motion/react";
 import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import Navbar from "../widget/Navbar";
-export const Header = () => {
+import UserMenu from "../widget/UserMenu";
+export const Header = ({ session }: { session: Session | null }) => {
   const [openMenu, setOpenMenu] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const isDesktop = useMediaQuery("(min-width: 768px)");
@@ -82,9 +84,12 @@ export const Header = () => {
               <Button variant="secondary" size="default" className="">
                 <LucideShoppingBag />
               </Button>
-              <Button asChild>
-                <Link href={"/sign-in"}>ورود</Link>
-              </Button>
+              {!session && (
+                <Button asChild>
+                  <Link href={"/sign-in"}>ورود</Link>
+                </Button>
+              )}
+              {session && <UserMenu session={session} />}
             </section>
           </div>
         </div>

@@ -1,8 +1,7 @@
-import { Footer, Header } from "@/components/marketing";
 import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
 
-export default async function MarketingLayout({
+export default async function DashboardLayout({
   children,
 }: {
   children: React.ReactNode;
@@ -12,9 +11,8 @@ export default async function MarketingLayout({
   });
   return (
     <section>
-      <Header session={session} />
+      dashbord
       {children}
-      <Footer />
     </section>
   );
 }

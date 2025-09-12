@@ -1,17 +1,21 @@
 "use client";
 
+import { signIn } from "@/actions/auth-actions";
 import { signInFormSchema } from "@/lib/validator.shema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
   EyeIcon,
   EyeOffIcon,
   HomeIcon,
+  Loader,
   LockIcon,
   MailIcon,
 } from "lucide-react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
+import { toast } from "sonner";
 import z from "zod";
 import { Input } from "../ui/base-input";
 import { Button } from "../ui/button";
@@ -38,6 +42,7 @@ import {
 } from "../ui/tooltip";
 
 const SignInForm = () => {
+  const router = useRouter();
   const [showPassword, setShowPassword] = useState(false);
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);
@@ -52,8 +57,25 @@ const SignInForm = () => {
     },
   });
 
-  const signInHandler = (data: z.infer<typeof signInFormSchema>) => {
-    console.log(data);
+  const signInHandler = async (data: z.infer<typeof signInFormSchema>) => {
+    const { email, password } = data;
+    try {
+      const result = await signIn(email, password);
+      if (!result.user) {
+        form.setError("root", {
+          message: "اطلاعات وارد شده صحیح نمیباشد.",
+        });
+        return false;
+      }
+      toast.success(" ورود با موفقیت انجام شد 🎉😍", {
+        richColors: true,
+      });
+      router.push("/");
+    } catch (error) {
+      form.setError("root", {
+        message: "مشکلی در اتصال بوجود آمد.",
+      });
+    }
   };
 
   return (
@@ -136,9 +158,27 @@ const SignInForm = () => {
               )}
             />
             <div className="pt-4">
-              <Button className="w-full " type="submit">
-                <span className="text-sm">ثبت نام</span>
+              <Button
+                className="w-full "
+                type="submit"
+                disabled={
+                  form.formState.isSubmitting || form.formState.isLoading
+                }
+              >
+                {form.formState.isSubmitting || form.formState.isLoading ? (
+                  <>
+                    {" "}
+                    <Loader className="animate-spin" /> کمی صبر کنید ...
+                  </>
+                ) : (
+                  <span className="text-sm">ورود به حساب کاربری</span>
+                )}
               </Button>
+              <div className="root_error text-red-500 py-5 text-sm">
+                {form.formState?.errors?.root && (
+                  <>{form.formState.errors.root?.message}</>
+                )}
+              </div>
             </div>
             <div>
               <p className="text-center text-sm text-gray-500">
