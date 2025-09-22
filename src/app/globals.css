@@ -140,3 +140,12 @@
     @apply flex items-center justify-between gap-4 flex-wrap;
   }
 }
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+}
