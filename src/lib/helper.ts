@@ -20,3 +20,14 @@ export function formatDurationReadable(seconds: number): string {
   if (mins > 0) return `${mins} دقیقه`;
   return `${seconds} ثانیه`;
 }
+export function slugify(title: string): string {
+  return title
+    .toString()
+    .normalize("NFD") // نرمال‌سازی
+    .replace(/[\u0300-\u036f]/g, "") // حذف علائم اضافی
+    .toLowerCase()
+    .trim()
+    .replace(/[^a-z0-9\u0600-\u06FF\s-]/g, "") // نگه داشتن فارسی + انگلیسی + عدد
+    .replace(/\s+/g, "-") // فاصله‌ها → -
+    .replace(/-+/g, "-"); // چندتا - → یکی
+}

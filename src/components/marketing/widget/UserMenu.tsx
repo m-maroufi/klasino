@@ -50,7 +50,13 @@ export default function UserMenu({ session }: { session: Session }) {
         <DropdownMenuItem className="">
           <Link
             className="flex font-medium text-sm gap-3"
-            href={session.user.role == "user" ? "/student" : "/admin"}
+            href={
+              session.user.role == "user"
+                ? "/student"
+                : session.user.role == "admin"
+                ? "/admin"
+                : "/instructor"
+            }
           >
             <User className="h-4 w-4" />
             پنل کاربری

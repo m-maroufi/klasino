@@ -35,8 +35,8 @@ export function AppSidebar({ user, menus }: SidebarData) {
   return (
     <Sidebar collapsible="offcanvas" variant="sidebar" side="right">
       {/* HEADER */}
-      <SidebarHeader>
-        <div className="px-3 py-4 border-b border-gray-200 flex items-start gap-3">
+      <SidebarHeader className="p-0">
+        <div className="px-3 py-3 h-14 border-b border-gray-200 flex items-start gap-3">
           <Avatar className="size-9">
             <AvatarImage
               src={user?.image || "https://github.com/shadcn.png"}

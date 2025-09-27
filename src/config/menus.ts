@@ -18,7 +18,7 @@ export const menusDashboard: { [role: string]: MenuGroup[] } = {
         {
           label: "Dashboard",
           fa_label: "داشبورد",
-          path: "/admin/dashboard",
+          path: "/admin",
           icon: Home,
         },
         {
@@ -62,7 +62,7 @@ export const menusDashboard: { [role: string]: MenuGroup[] } = {
         {
           label: "Dashboard",
           fa_label: "داشبورد",
-          path: "/instructor/dashboard",
+          path: "/instructor",
           icon: Home,
         },
         {
@@ -102,7 +102,7 @@ export const menusDashboard: { [role: string]: MenuGroup[] } = {
         {
           label: "Dashboard",
           fa_label: "داشبورد",
-          path: "/user/dashboard",
+          path: "/user",
           icon: Home,
         },
         {

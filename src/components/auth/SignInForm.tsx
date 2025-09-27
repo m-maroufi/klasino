@@ -61,19 +61,28 @@ const SignInForm = () => {
     const { email, password } = data;
     try {
       const result = await signIn(email, password);
-      if (!result.user) {
+      console.log(result);
+      if (
+        (result?.statusCode && result.statusCode === 401) ||
+        result?.statusText === "UNAUTHORIZED"
+      ) {
         form.setError("root", {
           message: "اطلاعات وارد شده صحیح نمیباشد.",
         });
         return false;
       }
-      toast.success(" ورود با موفقیت انجام شد 🎉😍", {
-        richColors: true,
-      });
-      router.push("/");
-    } catch (error) {
+      if (
+        (result?.statusCode && result.statusCode === 201) ||
+        result?.statusText === "OK"
+      ) {
+        toast.success(" ورود با موفقیت انجام شد 🎉😍", {
+          richColors: true,
+        });
+        router.push("/");
+      }
+    } catch (error: any) {
       form.setError("root", {
-        message: "مشکلی در اتصال بوجود آمد.",
+        message: error?.message || "خطای ناشناخته ، دوباره تلاش کنید",
       });
     }
   };

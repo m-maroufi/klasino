@@ -1,4 +1,5 @@
 import { AppSidebar } from "@/components/app-sidebar";
+import DashboardHeader from "@/components/dashboard/layout/DashboardHeader";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { User } from "@/lib/auth";
 import { MenuGroup, MenuItem } from "@/types/menu";
@@ -39,9 +40,9 @@ export default async function DashboardLayout({
       <section className="flex min-h-screen bg-sidebar">
         <SidebarProvider dir="rtl" className="">
           <AppSidebar menus={menus} user={user} />
-          <main className="flex-1 p-6 bg-white">
-            <SidebarTrigger />
-            {children}
+          <main className="flex-1 bg-white">
+            <DashboardHeader />
+            <div className="p-4">{children}</div>
           </main>
         </SidebarProvider>
       </section>

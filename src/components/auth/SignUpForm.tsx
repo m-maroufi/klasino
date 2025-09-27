@@ -14,6 +14,7 @@ import {
   User,
 } from "lucide-react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
@@ -36,7 +37,6 @@ import {
   FormMessage,
 } from "../ui/form";
 import { Tooltip, TooltipProvider, TooltipTrigger } from "../ui/tooltip";
-import { useRouter } from "next/navigation";
 
 const SignUpForm = () => {
   const router = useRouter();
@@ -59,19 +59,26 @@ const SignUpForm = () => {
     const { name, email, password } = data;
     try {
       const result = await signUp(name, email, password);
-      if (!result.user) {
-        form.setError("root", {
-          message: "مشکلی در ایجاد حساب به وجود آمد.",
+      if (result?.statusCode == 201 || result?.statusText == "OK") {
+        toast.success(" ثبت نام با موفقیت انجام شد 🎉😍", {
+          richColors: true,
         });
-        return false;
+        router.push("/");
+        return;
       }
-      toast.success("ثبت نام با موفقیت انجام شد 🎉😍", {
-        richColors: true,
-      });
-      router.push("/");
+      if (
+        result?.statusText == "UNPROCESSABLE_ENTITY" ||
+        result?.statusCode == 422
+      ) {
+        form.setError("email", {
+          message: "ایمیل وارد شده قبلا ثبت شده است.",
+        });
+        return;
+      }
+      throw new Error(result?.message || "خطای ناشناخته ، دوباره تلاش کنید");
     } catch (error) {
       form.setError("root", {
-        message: "مشکلی در اتصال بوجود آمد.",
+        message: "خطای ناشناخته ، دوباره تلاش کنید",
       });
     }
   };
