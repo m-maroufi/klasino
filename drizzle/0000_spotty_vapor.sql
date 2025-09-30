@@ -1,3 +1,20 @@
+DROP TYPE IF EXISTS "course_status";
+DROP TYPE IF EXISTS "payment_status";
+DROP TYPE IF EXISTS "user_role";
+DROP TABLE IF EXISTS "categories";
+DROP TABLE IF EXISTS "course_categories";
+DROP TABLE IF EXISTS "courses";
+DROP TABLE IF EXISTS "lessons";
+DROP TABLE IF EXISTS "progress";
+DROP TABLE IF EXISTS "purchases";
+DROP TABLE IF EXISTS "reviews";
+DROP TABLE IF EXISTS "sections";
+DROP TABLE IF EXISTS "account";
+DROP TABLE IF EXISTS "session";
+DROP TABLE IF EXISTS "users";
+DROP TABLE IF EXISTS "verification";
+--> statement-breakpoint
+
 CREATE TYPE "public"."course_status" AS ENUM('ongoing', 'completed', 'preorder');--> statement-breakpoint
 CREATE TYPE "public"."payment_status" AS ENUM('pending', 'paid', 'failed');--> statement-breakpoint
 CREATE TYPE "public"."user_role" AS ENUM('student', 'instructor', 'admin');--> statement-breakpoint
@@ -18,7 +35,7 @@ CREATE TABLE "account" (
 );
 --> statement-breakpoint
 CREATE TABLE "categories" (
-	"id" text PRIMARY KEY NOT NULL,
+	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
 	"name" varchar(100) NOT NULL,
 	"slug" varchar(100) NOT NULL,
 	"created_at" timestamp DEFAULT now() NOT NULL,
@@ -27,13 +44,13 @@ CREATE TABLE "categories" (
 );
 --> statement-breakpoint
 CREATE TABLE "course_categories" (
-	"course_id" text NOT NULL,
-	"category_id" text NOT NULL,
+	"course_id" uuid NOT NULL,
+	"category_id" uuid NOT NULL,
 	CONSTRAINT "course_categories_pk" PRIMARY KEY("course_id","category_id")
 );
 --> statement-breakpoint
 CREATE TABLE "courses" (
-	"id" text PRIMARY KEY NOT NULL,
+	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
 	"title" varchar(255) NOT NULL,
 	"slug" varchar(255) NOT NULL,
 	"description" text,
@@ -51,8 +68,8 @@ CREATE TABLE "courses" (
 );
 --> statement-breakpoint
 CREATE TABLE "lessons" (
-	"id" text PRIMARY KEY NOT NULL,
-	"section_id" text NOT NULL,
+	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
+	"section_id" uuid NOT NULL,
 	"title" varchar(255) NOT NULL,
 	"video_url" text NOT NULL,
 	"duration" integer,
@@ -64,16 +81,16 @@ CREATE TABLE "lessons" (
 CREATE TABLE "progress" (
 	"id" text PRIMARY KEY NOT NULL,
 	"user_id" text NOT NULL,
-	"lesson_id" text NOT NULL,
+	"lesson_id" uuid NOT NULL,
 	"is_completed" boolean DEFAULT false NOT NULL,
 	"updated_at" timestamp DEFAULT now() NOT NULL,
 	CONSTRAINT "user_lesson_unique" UNIQUE("user_id","lesson_id")
 );
 --> statement-breakpoint
 CREATE TABLE "purchases" (
-	"id" text PRIMARY KEY NOT NULL,
+	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
 	"user_id" text NOT NULL,
-	"course_id" text NOT NULL,
+	"course_id" uuid NOT NULL,
 	"price_paid" integer NOT NULL,
 	"payment_status" "payment_status" DEFAULT 'pending' NOT NULL,
 	"payment_provider" varchar(50),
@@ -81,17 +98,17 @@ CREATE TABLE "purchases" (
 );
 --> statement-breakpoint
 CREATE TABLE "reviews" (
-	"id" text PRIMARY KEY NOT NULL,
+	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
 	"user_id" text NOT NULL,
-	"course_id" text NOT NULL,
+	"course_id" uuid NOT NULL,
 	"rating" integer NOT NULL,
 	"comment" text,
 	"created_at" timestamp DEFAULT now() NOT NULL
 );
 --> statement-breakpoint
 CREATE TABLE "sections" (
-	"id" text PRIMARY KEY NOT NULL,
-	"course_id" text NOT NULL,
+	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
+	"course_id" uuid NOT NULL,
 	"title" varchar(255) NOT NULL,
 	"order" integer DEFAULT 0 NOT NULL,
 	"created_at" timestamp DEFAULT now() NOT NULL
@@ -118,7 +135,7 @@ CREATE TABLE "users" (
 	"image" text,
 	"created_at" timestamp DEFAULT now() NOT NULL,
 	"updated_at" timestamp DEFAULT now() NOT NULL,
-	"role" "user_role" DEFAULT 'student' NOT NULL,
+	"role" text DEFAULT 'student' NOT NULL,
 	"banned" boolean DEFAULT false,
 	"ban_reason" text,
 	"ban_expires" timestamp,

@@ -1,8 +1,9 @@
 "use client";
-"use client";
 
+import { createCourse } from "@/actions/create-course";
 import ImageUpload from "@/components/shared/ImageUploader";
 import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 import {
   Command,
   CommandEmpty,
@@ -14,6 +15,7 @@ import {
 import {
   Form,
   FormControl,
+  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -26,14 +28,17 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { getCategories } from "@/db/queries";
+// import { getCategories } from "@/db/queries";
 import { useSlug } from "@/hooks/useSlug";
 import { cn } from "@/lib/utils";
 import { CreateCourseFormSchema } from "@/lib/validator.shema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Check, ChevronsUpDown } from "lucide-react";
 import dynamic from "next/dynamic";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
+import { toast } from "sonner";
 import z from "zod";
 
 // QuillEditor رو فقط کلاینتی لود کن
@@ -56,7 +61,14 @@ export const categories = [
   { label: "مالی و سرمایه گذاری", value: "finance" },
 ];
 
-const CreateCouresForm = () => {
+const CreateCouresForm = ({
+  onCreated,
+}: {
+  onCreated: (id: string) => void;
+}) => {
+  const [categoriesList, setCategoriesList] = useState<
+    { name: string; id: string; slug: string }[]
+  >([]);
   const form = useForm<z.infer<typeof CreateCourseFormSchema>>({
     resolver: zodResolver(CreateCourseFormSchema),
     reValidateMode: "onChange",
@@ -66,11 +78,11 @@ const CreateCouresForm = () => {
       slug: "",
       description: "",
       thumbnailUrl: "",
-      price: 0,
+
       isPublished: false,
       level: "beginner",
       language: "فارسی",
-      duration: 0,
+
       status: "preorder",
       category: [],
     },
@@ -83,8 +95,24 @@ const CreateCouresForm = () => {
     console.log(form.getValues("description"));
   }, [slug, form]);
   async function onsubmitHandler(data: z.infer<typeof CreateCourseFormSchema>) {
-    console.log(data);
+    const result = await createCourse(data);
+    if (result.success && result.data) {
+      onCreated?.(result.data.id);
+      toast.success(` دوره ${result.data.title} با موفقیت ایجاد شد`, {
+        richColors: true,
+      });
+      form.reset();
+    }
   }
+
+  useEffect(() => {
+    async function fetchCategories() {
+      const cats = await getCategories();
+      setCategoriesList(cats);
+    }
+    fetchCategories();
+  }, []);
+
   return (
     <div className="py-6">
       <Form {...form}>
@@ -135,7 +163,10 @@ const CreateCouresForm = () => {
                       placeholder="قیمت دوره به تومان وارد کنید"
                       {...field}
                       value={field.value ?? ""}
-                      onChange={(e) => field.onChange(e.target.valueAsNumber)}
+                      onChange={(e) => {
+                        const val = e.target.valueAsNumber;
+                        field.onChange(isNaN(val) ? "" : val);
+                      }}
                     />
                   </FormControl>
                   <FormMessage />
@@ -154,7 +185,10 @@ const CreateCouresForm = () => {
                       placeholder="مدت زمان بر حسب دقیقه"
                       {...field}
                       value={field.value ?? ""}
-                      onChange={(e) => field.onChange(e.target.valueAsNumber)}
+                      onChange={(e) => {
+                        const val = e.target.valueAsNumber;
+                        field.onChange(isNaN(val) ? "" : val);
+                      }}
                     />
                   </FormControl>
                   <FormMessage />
@@ -296,68 +330,48 @@ const CreateCouresForm = () => {
             <FormField
               control={form.control}
               name="category"
-              render={({ field }) => (
-                <FormItem className="flex flex-col">
-                  <FormLabel>دسته‌بندی‌ها</FormLabel>
-                  <Popover>
-                    <PopoverTrigger asChild>
-                      <Button
-                        variant="outline"
-                        role="combobox"
-                        className="w-full min-h-[150px] flex flex-wrap gap-1 items-center"
-                      >
-                        {field.value.length > 0 ? (
-                          <div className="flex flex-wrap gap-1">
-                            {field.value.map((val: string) => {
-                              const cat = categories.find(
-                                (c) => c.value === val
-                              );
-                              if (!cat) return null;
-                              return (
-                                <span
-                                  key={val}
-                                  className="bg-blue-100 text-blue-800 px-2 py-1 rounded-md text-sm"
-                                >
-                                  {cat.label}
-                                </span>
-                              );
-                            })}
-                          </div>
-                        ) : (
-                          "انتخاب دسته‌بندی‌ها"
-                        )}
-                      </Button>
-                    </PopoverTrigger>
-                    <PopoverContent className="w-[300px] p-0">
-                      <Command>
-                        <CommandInput placeholder="جستجو..." />
-                        <CommandList>
-                          <CommandEmpty>چیزی پیدا نشد</CommandEmpty>
-                          <CommandGroup>
-                            {categories.map((cat) => (
-                              <CommandItem
-                                key={cat.value}
-                                value={cat.value}
-                                onSelect={() => {
-                                  if (!field.value.includes(cat.value)) {
-                                    field.onChange([...field.value, cat.value]);
-                                  } else {
-                                    field.onChange(
-                                      field.value.filter(
-                                        (v: string) => v !== cat.value
-                                      )
-                                    );
-                                  }
+              render={() => (
+                <FormItem>
+                  <div className="mb-4">
+                    <FormLabel className="text-base">دسته بندی ها</FormLabel>
+                    <FormDescription>
+                      (می‌توانید چندین دسته‌بندی را انتخاب کنید)
+                    </FormDescription>
+                  </div>
+
+                  {categoriesList.map((item) => (
+                    <FormField
+                      key={item.id}
+                      control={form.control}
+                      name="category"
+                      render={({ field }) => {
+                        return (
+                          <FormItem
+                            key={item.id}
+                            className="flex flex-row items-center gap-2"
+                          >
+                            <FormControl>
+                              <Checkbox
+                                checked={field.value?.includes(item.id)}
+                                onCheckedChange={(checked) => {
+                                  return checked
+                                    ? field.onChange([...field.value, item.id])
+                                    : field.onChange(
+                                        field.value?.filter(
+                                          (value) => value !== item.id
+                                        )
+                                      );
                                 }}
-                              >
-                                {cat.label}
-                              </CommandItem>
-                            ))}
-                          </CommandGroup>
-                        </CommandList>
-                      </Command>
-                    </PopoverContent>
-                  </Popover>
+                              />
+                            </FormControl>
+                            <FormLabel className="text-sm font-normal">
+                              {item.name}
+                            </FormLabel>
+                          </FormItem>
+                        );
+                      }}
+                    />
+                  ))}
                   <FormMessage />
                 </FormItem>
               )}

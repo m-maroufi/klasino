@@ -7,6 +7,7 @@ import {
   text,
   timestamp,
   unique,
+  uuid,
   varchar,
 } from "drizzle-orm/pg-core";
 
@@ -100,7 +101,7 @@ export const verification = pgTable("verification", {
 
 // ========== COURSES ==========
 export const courses = pgTable("courses", {
-  id: text("id").primaryKey(),
+  id: uuid("id").primaryKey().defaultRandom(),
   title: varchar("title", { length: 255 }).notNull(),
   slug: varchar("slug", { length: 255 }).notNull().unique(),
   description: text("description"),
@@ -120,8 +121,9 @@ export const courses = pgTable("courses", {
 
 // ========== SECTIONS ==========
 export const sections = pgTable("sections", {
-  id: text("id").primaryKey(),
-  courseId: text("course_id")
+  id: uuid("id").primaryKey().defaultRandom(),
+
+  courseId: uuid("course_id")
     .notNull()
     .references(() => courses.id, { onDelete: "cascade" }),
   title: varchar("title", { length: 255 }).notNull(),
@@ -131,8 +133,9 @@ export const sections = pgTable("sections", {
 
 // ========== LESSONS ==========
 export const lessons = pgTable("lessons", {
-  id: text("id").primaryKey(),
-  sectionId: text("section_id")
+  id: uuid("id").primaryKey().defaultRandom(),
+
+  sectionId: uuid("section_id")
     .notNull()
     .references(() => sections.id, { onDelete: "cascade" }),
   title: varchar("title", { length: 255 }).notNull(),
@@ -145,11 +148,11 @@ export const lessons = pgTable("lessons", {
 
 // ========== PURCHASES ==========
 export const purchases = pgTable("purchases", {
-  id: text("id").primaryKey(),
+  id: uuid("id").primaryKey().defaultRandom(),
   userId: text("user_id")
     .notNull()
     .references(() => users.id, { onDelete: "cascade" }),
-  courseId: text("course_id")
+  courseId: uuid("course_id")
     .notNull()
     .references(() => courses.id, { onDelete: "cascade" }),
   pricePaid: integer("price_paid").notNull(),
@@ -168,7 +171,7 @@ export const progress = pgTable(
     userId: text("user_id")
       .notNull()
       .references(() => users.id, { onDelete: "cascade" }),
-    lessonId: text("lesson_id")
+    lessonId: uuid("lesson_id")
       .notNull()
       .references(() => lessons.id, { onDelete: "cascade" }),
     isCompleted: boolean("is_completed").default(false).notNull(),
@@ -179,11 +182,12 @@ export const progress = pgTable(
 
 // ========== REVIEWS ==========
 export const reviews = pgTable("reviews", {
-  id: text("id").primaryKey(),
+  id: uuid("id").primaryKey().defaultRandom(),
+
   userId: text("user_id")
     .notNull()
     .references(() => users.id, { onDelete: "cascade" }),
-  courseId: text("course_id")
+  courseId: uuid("course_id")
     .notNull()
     .references(() => courses.id, { onDelete: "cascade" }),
   rating: integer("rating").notNull(),
@@ -193,7 +197,7 @@ export const reviews = pgTable("reviews", {
 
 // ========== CATEGORIES ==========
 export const categories = pgTable("categories", {
-  id: text("id").primaryKey(),
+  id: uuid("id").primaryKey().defaultRandom(),
   name: varchar("name", { length: 100 }).notNull().unique(),
   slug: varchar("slug", { length: 100 }).notNull().unique(),
   createdAt: timestamp("created_at").defaultNow().notNull(),
@@ -203,10 +207,10 @@ export const categories = pgTable("categories", {
 export const courseCategories = pgTable(
   "course_categories",
   {
-    courseId: text("course_id")
+    courseId: uuid("course_id")
       .notNull()
       .references(() => courses.id, { onDelete: "cascade" }),
-    categoryId: text("category_id")
+    categoryId: uuid("category_id")
       .notNull()
       .references(() => categories.id, { onDelete: "cascade" }),
   },

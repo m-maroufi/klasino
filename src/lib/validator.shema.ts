@@ -16,12 +16,12 @@ const CreateCourseFormSchema = z.object({
   description: z.string().min(20, "توضیحات دوره باید حداقل ۲۰ کاراکتر باشد"),
   thumbnailUrl: z.url("لطفا لینک تامنیل را وارد کنید"),
   price: z.number("قیمت باید یک عدد باشد").min(0, "قیمت نمی‌تواند منفی باشد"),
+  duration: z.number().optional(),
   isPublished: z.boolean().optional(),
   level: z.enum(["beginner", "intermediate", "advanced"], {
     message: "لطفا یک سطح معتبر انتخاب کنید",
   }),
   language: z.string("لطفا زبان دوره را انتخاب کنید").optional(),
-  duration: z.number().optional(),
   status: z.enum(["ongoing", "completed", "preorder"], {
     message: "لطفا یک وضعیت معتبر انتخاب کنید",
   }),

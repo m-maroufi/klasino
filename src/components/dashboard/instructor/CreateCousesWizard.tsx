@@ -2,12 +2,20 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useState } from "react";
 import CreateCouresForm from "./CreateCouresForm";
+import ManageLessons from "./ManageLessons";
+import ManageSections from "./ManageSections";
 
 export default function CreateCourseWizard() {
-  const [courseId, setCourseId] = useState<string | null>(null);
+  const [courseId, setCourseId] = useState<string | null>(
+    "129bcc0f-c4a9-4f95-bb64-301fd5b21218"
+  );
 
   return (
-    <Tabs defaultValue="course" className="w-full" dir="rtl">
+    <Tabs
+      defaultValue={!courseId ? "course" : "sections"}
+      className="w-full"
+      dir="rtl"
+    >
       <TabsList variant={"line"}>
         <TabsTrigger value="course">اطلاعات دوره</TabsTrigger>
         <TabsTrigger value="sections" disabled={!courseId}>
@@ -20,15 +28,15 @@ export default function CreateCourseWizard() {
 
       <TabsContent value="course">
         {/* onCreated={(id) => setCourseId(id)} */}
-        <CreateCouresForm />
+        <CreateCouresForm onCreated={(id) => setCourseId(id)} />
       </TabsContent>
 
       <TabsContent value="sections">
-        {/* <ManageSections courseId={courseId!} /> */}
+        <ManageSections courseId={courseId!} />
       </TabsContent>
 
       <TabsContent value="lessons">
-        {/* <ManageLessons courseId={courseId!} /> */}
+        <ManageLessons courseId={courseId!} />
       </TabsContent>
     </Tabs>
   );

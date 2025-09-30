@@ -1,7 +1,8 @@
+"use server";
 import { sleep } from "@/lib/helper";
 import { count, desc, eq } from "drizzle-orm";
 import db from "./index";
-import { courses, purchases, users } from "./schema";
+import { categories, courses, purchases, users } from "./schema";
 export async function getAllCourses(limit: number = 12) {
   await sleep(1500); // simulate delay
   return db
@@ -56,4 +57,12 @@ export async function getCourseBySlug(slug: string) {
   }
 
   return result[0];
+}
+
+export async function getCategories() {
+  // console.log("cod");
+  // const result = await db.select().from(categories);
+  // console.log(result);
+
+  return db.select().from(categories).orderBy(desc(categories.createdAt));
 }
