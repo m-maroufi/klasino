@@ -4,39 +4,45 @@ import { useState } from "react";
 import CreateCouresForm from "./CreateCouresForm";
 import ManageLessons from "./ManageLessons";
 import ManageSections from "./ManageSections";
-
+interface CourseType {
+  id: string;
+  title: string;
+  description: string | null;
+}
 export default function CreateCourseWizard() {
-  const [courseId, setCourseId] = useState<string | null>(
-    "129bcc0f-c4a9-4f95-bb64-301fd5b21218"
-  );
+  const [course, setCourse] = useState<CourseType | null>({
+    id: "129bcc0f-c4a9-4f95-bb64-301fd5b21218",
+    title: "دوره تلویند",
+    description: "این یک دوره تستی است",
+  });
 
   return (
     <Tabs
-      defaultValue={!courseId ? "course" : "sections"}
+      defaultValue={!course?.id ? "course" : "sections"}
       className="w-full"
       dir="rtl"
     >
       <TabsList variant={"line"}>
         <TabsTrigger value="course">اطلاعات دوره</TabsTrigger>
-        <TabsTrigger value="sections" disabled={!courseId}>
+        <TabsTrigger value="sections" disabled={!course?.id}>
           سرفصل‌ها
         </TabsTrigger>
-        <TabsTrigger value="lessons" disabled={!courseId}>
+        <TabsTrigger value="lessons" disabled={!course?.id}>
           درس‌ها
         </TabsTrigger>
       </TabsList>
 
       <TabsContent value="course">
         {/* onCreated={(id) => setCourseId(id)} */}
-        <CreateCouresForm onCreated={(id) => setCourseId(id)} />
+        <CreateCouresForm onCreated={(course) => setCourse(course)} />
       </TabsContent>
 
       <TabsContent value="sections">
-        <ManageSections courseId={courseId!} />
+        <ManageSections courseId={course?.id} courseTitle={course?.title} />
       </TabsContent>
 
       <TabsContent value="lessons">
-        <ManageLessons courseId={courseId!} />
+        <ManageLessons courseId={course?.id!} courseTitle={course?.title} />
       </TabsContent>
     </Tabs>
   );

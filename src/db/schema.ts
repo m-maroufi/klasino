@@ -127,6 +127,7 @@ export const sections = pgTable("sections", {
     .notNull()
     .references(() => courses.id, { onDelete: "cascade" }),
   title: varchar("title", { length: 255 }).notNull(),
+  description: text("description"),
   order: integer("order").default(0).notNull(),
   createdAt: timestamp("created_at").defaultNow().notNull(),
 });

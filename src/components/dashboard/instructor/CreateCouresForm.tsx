@@ -64,7 +64,11 @@ export const categories = [
 const CreateCouresForm = ({
   onCreated,
 }: {
-  onCreated: (id: string) => void;
+  onCreated: (course: {
+    id: string;
+    title: string;
+    description: string | null;
+  }) => void;
 }) => {
   const [categoriesList, setCategoriesList] = useState<
     { name: string; id: string; slug: string }[]
@@ -97,7 +101,11 @@ const CreateCouresForm = ({
   async function onsubmitHandler(data: z.infer<typeof CreateCourseFormSchema>) {
     const result = await createCourse(data);
     if (result.success && result.data) {
-      onCreated?.(result.data.id);
+      onCreated?.({
+        id: result.data.id,
+        title: result.data.title,
+        description: result.data.description,
+      });
       toast.success(` دوره ${result.data.title} با موفقیت ایجاد شد`, {
         richColors: true,
       });

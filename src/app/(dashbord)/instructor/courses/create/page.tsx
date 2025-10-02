@@ -1,5 +1,6 @@
 import CreateCourseWizard from "@/components/dashboard/instructor/CreateCousesWizard";
 import { Card, CardContent } from "@/components/ui/card";
+import ReactQueryProvider from "@/provider/ReactQueryProvider";
 
 export default function CreateCoursePage() {
   return (
@@ -10,7 +11,9 @@ export default function CreateCoursePage() {
       </p>
       <Card>
         <CardContent>
-          <CreateCourseWizard />
+          <ReactQueryProvider>
+            <CreateCourseWizard />
+          </ReactQueryProvider>
         </CardContent>
       </Card>
     </div>

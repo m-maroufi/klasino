@@ -8,6 +8,13 @@
       "when": 1759218796886,
       "tag": "0000_spotty_vapor",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1759417857060,
+      "tag": "0001_absent_calypso",
+      "breakpoints": true
     }
   ]
 }
