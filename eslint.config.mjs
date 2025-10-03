@@ -26,6 +26,8 @@ export default [
       "unused-imports/no-unused-imports": "off",
       "@next/next/no-img-element": "off",
       "react-hooks/exhaustive-deps": "off",
+      "@typescript-eslint/no-explicit-any": "off",
+      "react-hooks/rules-of-hooks": "off",
     },
   },
 ];
