@@ -41,7 +41,7 @@ const CourseVideosSection = ({ slug }: { slug: string }) => {
   return (
     <>
       <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
-        <DialogContent className=" h-fit" variant="default" dir="rtl">
+        <DialogContent className=" h-fit" dir="rtl">
           <DialogHeader>
             <DialogTitle className="font-vazir text-center">
               {selectedLessonTitle}
@@ -61,7 +61,7 @@ const CourseVideosSection = ({ slug }: { slug: string }) => {
           )}
         </DialogContent>
       </Dialog>
-      <Accordion type="single" variant="outline" collapsible className="w-full">
+      <Accordion type="single" collapsible className="w-full">
         {data?.map((section) => (
           <AccordionItem key={section.id} value={section.id}>
             <AccordionTrigger className="font-vazir">

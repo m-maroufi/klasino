@@ -10,11 +10,7 @@ interface CourseType {
   description: string | null;
 }
 export default function CreateCourseWizard() {
-  const [course, setCourse] = useState<CourseType | null>({
-    id: "129bcc0f-c4a9-4f95-bb64-301fd5b21218",
-    title: "دوره تلویند",
-    description: "این یک دوره تستی است",
-  });
+  const [course, setCourse] = useState<CourseType | null>(null);
 
   return (
     <Tabs

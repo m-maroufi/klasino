@@ -3,7 +3,6 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
-  DialogBody,
   DialogClose,
   DialogContent,
   DialogDescription,
@@ -90,7 +89,7 @@ const CommentsTab = () => {
                     لطفا دیدگاه خود را با رعایت ادب و احترام ثبت کنید.
                   </DialogDescription>
                 </DialogHeader>
-                <DialogBody>
+                <DialogContent>
                   <FormField
                     control={form.control}
                     name="feedback"
@@ -107,7 +106,7 @@ const CommentsTab = () => {
                       </FormItem>
                     )}
                   />
-                </DialogBody>
+                </DialogContent>
                 <DialogFooter className="space-x-4 flex gap-5">
                   <DialogClose asChild>
                     <Button type="button" variant="outline">

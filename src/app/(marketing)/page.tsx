@@ -6,7 +6,7 @@ import { TitleSection } from "@/components/shared";
 import SkletonLoadingSection from "@/components/shared/SkletonLoadingSection";
 import { Suspense } from "react";
 
-export default function Home() {
+export default async function Home() {
   return (
     <section className="">
       <Hero />

@@ -82,11 +82,9 @@ const CreateCouresForm = ({
       slug: "",
       description: "",
       thumbnailUrl: "",
-
       isPublished: false,
       level: "beginner",
       language: "فارسی",
-
       status: "preorder",
       category: [],
     },
@@ -172,7 +170,7 @@ const CreateCouresForm = ({
                       {...field}
                       value={field.value ?? ""}
                       onChange={(e) => {
-                        const val = e.target.valueAsNumber;
+                        const val = parseInt(e.target.value);
                         field.onChange(isNaN(val) ? "" : val);
                       }}
                     />

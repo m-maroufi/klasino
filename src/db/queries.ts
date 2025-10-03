@@ -1,68 +1,82 @@
 "use server";
-import { sleep } from "@/lib/helper";
 import { count, desc, eq } from "drizzle-orm";
 import db from "./index";
 import { categories, courses, purchases, users } from "./schema";
+
 export async function getAllCourses(limit: number = 12) {
-  await sleep(1500); // simulate delay
-  return db
-    .select({
-      courseId: courses.id,
-      title: courses.title,
-      slug: courses.slug,
-      thumbnailUrl: courses.thumbnailUrl,
-      price: courses.price,
-      isPublished: courses.isPublished,
-      instructorName: users.name,
-    })
-    .from(courses)
-    .leftJoin(users, eq(users.id, courses.instructorId))
-    .orderBy(desc(courses.createdAt))
-    .limit(limit);
+  try {
+    const result = await db
+      .select({
+        courseId: courses.id,
+        title: courses.title,
+        slug: courses.slug,
+        thumbnailUrl: courses.thumbnailUrl,
+        price: courses.price,
+        isPublished: courses.isPublished,
+        instructorName: users.name,
+        instructorId: users.id,
+      })
+      .from(courses)
+      .leftJoin(users, eq(users.id, courses.instructorId))
+      .orderBy(desc(courses.createdAt))
+      .limit(limit);
+
+    return result;
+  } catch (error) {
+    console.error("Error fetching courses:", error);
+    return []; // برمیگردونه یه آرایه خالی به جای کرش
+  }
 }
 
 export async function getCourseBySlug(slug: string) {
-  // decode URL-encoded slug
-  const decodedSlug = decodeURIComponent(slug);
+  try {
+    const decodedSlug = decodeURIComponent(slug);
 
-  // join دستی با instructor
-  const result = await db
-    .select({
-      id: courses.id,
-      title: courses.title,
-      slug: courses.slug,
-      description: courses.description,
-      thumbnailUrl: courses.thumbnailUrl,
-      price: courses.price,
-      isPublished: courses.isPublished,
-      level: courses.level,
-      language: courses.language,
-      duration: courses.duration,
-      createdAt: courses.createdAt,
-      updatedAt: courses.updatedAt,
-      instructorName: users.name,
-      instructorId: users.id,
-      status: courses.status,
-      purchasesCount: count(purchases.id).as("purchasesCount"), // ✅ درستش اینه
-    })
-    .from(courses)
-    .leftJoin(users, eq(users.id, courses.instructorId))
-    .leftJoin(purchases, eq(purchases.courseId, courses.id))
-    .where(eq(courses.slug, decodedSlug))
-    .groupBy(courses.id, users.id) // مهم برای count درست
-    .limit(1);
+    const result = await db
+      .select({
+        id: courses.id,
+        title: courses.title,
+        slug: courses.slug,
+        description: courses.description,
+        thumbnailUrl: courses.thumbnailUrl,
+        price: courses.price,
+        isPublished: courses.isPublished,
+        level: courses.level,
+        language: courses.language,
+        duration: courses.duration,
+        createdAt: courses.createdAt,
+        updatedAt: courses.updatedAt,
+        instructorName: users.name,
+        instructorId: users.id,
+        status: courses.status,
+        purchasesCount: count(purchases.id).as("purchasesCount"),
+      })
+      .from(courses)
+      .leftJoin(users, eq(users.id, courses.instructorId))
+      .leftJoin(purchases, eq(purchases.courseId, courses.id))
+      .where(eq(courses.slug, decodedSlug))
+      .groupBy(courses.id, users.id)
+      .limit(1);
 
-  if (result.length === 0) {
-    throw new Error("Course not found");
+    if (result.length === 0) {
+      return null; // به جای throw
+    }
+
+    return result[0];
+  } catch (error) {
+    console.error("Error fetching course by slug:", error);
+    return null; // به جای کرش
   }
-
-  return result[0];
 }
 
 export async function getCategories() {
-  // console.log("cod");
-  // const result = await db.select().from(categories);
-  // console.log(result);
-
-  return db.select().from(categories).orderBy(desc(categories.createdAt));
+  try {
+    return await db
+      .select()
+      .from(categories)
+      .orderBy(desc(categories.createdAt));
+  } catch (error) {
+    console.error("Error fetching categories:", error);
+    return []; // آرایه خالی اگر مشکل اتصال پیش آمد
+  }
 }

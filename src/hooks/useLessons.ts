@@ -1,6 +1,10 @@
 "use clinet";
 
-import { createLesson, getLessonsBySectionId } from "@/actions/lessons-course";
+import {
+  createLesson,
+  deleteLessonById,
+  getLessonsBySectionId,
+} from "@/actions/lessons-course";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 export const useLessons = ({ sectionId }: { sectionId: string }) => {
@@ -15,6 +19,7 @@ export const useLessons = ({ sectionId }: { sectionId: string }) => {
       title: string;
       sectionId: string;
       duration?: number;
+
       videoUrl: string;
       isPreview?: boolean;
     }) => createLesson(data),
@@ -22,5 +27,14 @@ export const useLessons = ({ sectionId }: { sectionId: string }) => {
       queryClient.invalidateQueries({ queryKey: ["lessons", sectionId] });
     },
   });
-  return { ...lessonQuery, addLesson };
+  const deleteLesson = useMutation({
+    mutationFn: async (lessonId: string) => {
+      // Implement delete lesson API call here
+      await deleteLessonById(lessonId);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["lessons", sectionId] });
+    },
+  });
+  return { ...lessonQuery, addLesson, deleteLesson };
 };

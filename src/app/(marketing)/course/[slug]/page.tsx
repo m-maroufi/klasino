@@ -15,6 +15,7 @@ export default async function CourseDetailsPage({ params }: Props) {
   const { slug } = await params;
   // Fetch course details using the slug if needed
   const course = await getCourseBySlug(slug);
+
   return (
     <main className="min-h-screen mt-20">
       <section className="container">
@@ -26,9 +27,10 @@ export default async function CourseDetailsPage({ params }: Props) {
               <h3 className="font-semibold text-xl">{course.title}</h3>
               <CourseStatusBadge status={course.status} />
             </div>
-            <div className="content_html font-vazir font-normal text-gray-600">
-              {course.description}
-            </div>
+            <div
+              className="content_html font-vazir font-normal text-gray-600"
+              dangerouslySetInnerHTML={{ __html: course.description || "" }}
+            />
             <Separator className="my-4" />
             <TabCourse courseSlug={course.slug} />
             <Separator className="my-8" />

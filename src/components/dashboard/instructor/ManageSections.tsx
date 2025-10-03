@@ -142,7 +142,7 @@ const ManageSections = ({ courseId, courseTitle }: ManageSectionsProps) => {
                         <FormLabel>توضیحات کوتاه</FormLabel>
                         <FormControl>
                           <Textarea
-                            placeholder="Tell us a little bit about yourself"
+                            placeholder="میتوانید توضیحاتی بنویسید ( اختیاری)"
                             className="resize-none"
                             {...field}
                           />

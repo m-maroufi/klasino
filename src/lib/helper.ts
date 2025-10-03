@@ -1,5 +1,5 @@
 export function formatPrice(price: number | null) {
-  if (price === null) return "رایگان"; // یا هر متن دلخواه برای رایگان
+  if (price === null || 0) return "رایگان"; // یا هر متن دلخواه برای رایگان
   return new Intl.NumberFormat("en-IR").format(price);
 }
 

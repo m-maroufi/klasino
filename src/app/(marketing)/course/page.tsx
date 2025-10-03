@@ -4,8 +4,10 @@ import {
   CardCourse,
   TitleSection,
 } from "@/components/shared";
+import { getAllCourses } from "@/db/queries";
 
-export default function CoursesPage() {
+export default async function CoursesPage() {
+  const courses = await getAllCourses();
   return (
     <main className="">
       <div className="min-h-14 w-full bg-white relative pt-24 pb-8 mb-5">
@@ -34,8 +36,8 @@ export default function CoursesPage() {
       <section className="container">
         <FiltersSection />
         <div className="courses grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4  gap-6 my-8">
-          {Array.from({ length: 12 }).map((_, index) => (
-            <CardCourse key={index} />
+          {courses.map((item, index) => (
+            <CardCourse key={index} {...item} />
           ))}
         </div>
       </section>

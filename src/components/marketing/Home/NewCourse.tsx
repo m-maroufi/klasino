@@ -1,6 +1,5 @@
 import { CardCourse, CardCourseSklaton } from "@/components/shared";
 import { getAllCourses } from "@/db/queries";
-export const revalidate = 120; // cache 60 ثانیه
 const NewCourse = async ({ limit }: { limit: number }) => {
   const courses = await getAllCourses(limit);
   return (
@@ -13,7 +12,7 @@ const NewCourse = async ({ limit }: { limit: number }) => {
         </>
       ) : (
         courses.map((course) => (
-          <CardCourse key={course.courseId} course={course} />
+          <CardCourse key={course.courseId} {...course} />
         ))
       )}
     </div>

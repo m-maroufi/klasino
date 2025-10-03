@@ -39,6 +39,6 @@ export async function createLesson(data: {
   return result[0];
 }
 
-export async function deleteLesson(lessonId: string) {
+export async function deleteLessonById(lessonId: string) {
   await db.delete(lessons).where(eq(lessons.id, lessonId));
 }
