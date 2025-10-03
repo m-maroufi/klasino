@@ -1,6 +1,4 @@
 "use client";
-import { useRef } from "react";
-import { useCopyToClipboard } from "@/hooks/use-copy-to-clipboard";
 import { Button } from "@/components/ui/base-button";
 import { Input, InputWrapper } from "@/components/ui/base-input";
 import {
@@ -9,7 +7,9 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { CheckIcon, CopyIcon } from "lucide-react";
+import { useCopyToClipboard } from "@/hooks/use-copy-to-clipboard";
+import { CheckIcon } from "lucide-react";
+import { useRef } from "react";
 
 export function OfferCode() {
   const { copy, copied } = useCopyToClipboard();

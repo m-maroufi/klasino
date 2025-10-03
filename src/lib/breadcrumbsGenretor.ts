@@ -14,7 +14,7 @@ const labelMapRecord: Record<string, string> = {
 export function breadcrumbsGenrator(pathname: string): BreadcrumbsItem[] {
   const segments = pathname.split("/").filter(Boolean);
 
-  let breadcrumbs: BreadcrumbsItem[] = [{ href: "/", label: "خانه" }];
+  const breadcrumbs: BreadcrumbsItem[] = [{ href: "/", label: "خانه" }];
 
   let currentPath = "";
   for (let index = 0; index < segments.length; index++) {

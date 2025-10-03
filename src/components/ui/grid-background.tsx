@@ -1,8 +1,8 @@
 "use client";
 
-import * as React from "react";
-import { HTMLMotionProps, motion } from "motion/react";
 import { cn } from "@/lib/utils";
+import { HTMLMotionProps, motion } from "motion/react";
+import * as React from "react";
 
 type GridSize =
   | "4:4"
@@ -42,7 +42,8 @@ function GridBackground({
   beams = {},
   ...props
 }: GridBackgroundProps) {
-  if (typeof window === "undefined") return null;
+  const isClient = typeof window !== "undefined";
+
   const {
     background = "bg-slate-900",
     borderColor = "border-slate-700/50",
@@ -73,34 +74,32 @@ function GridBackground({
   // Parse grid dimensions
   const [cols, rows] = gridSize.split(":").map(Number);
 
-  // Generate beam configurations
-  const animatedBeams = React.useMemo(
-    () =>
-      Array.from({ length: Math.min(count, 12) }, (_, i) => {
-        const direction = Math.random() > 0.5 ? "horizontal" : "vertical";
-        const startPosition = Math.random() > 0.5 ? "start" : "end";
+  // Hook همیشه اجرا میشه
+  const animatedBeams = React.useMemo(() => {
+    if (!isClient) return []; // فقط روی کلاینت انیمیشن ایجاد میشه
 
-        return {
-          id: i,
-          color: beamColors[i % beamColors.length],
-          direction,
-          startPosition,
-          // For horizontal beams: choose a row index (1 to rows-1) - exclude edges
-          // For vertical beams: choose a column index (1 to cols-1) - exclude edges
-          gridLine:
-            direction === "horizontal"
-              ? Math.floor(Math.random() * (rows - 1)) + 1
-              : Math.floor(Math.random() * (cols - 1)) + 1,
-          delay: Math.random() * 2,
-          duration: speed + Math.random() * 2,
-        };
-      }),
-    [count, beamColors, speed, cols, rows]
-  );
+    return Array.from({ length: Math.min(count, 12) }, (_, i) => {
+      const direction = Math.random() > 0.5 ? "horizontal" : "vertical";
+      const startPosition = Math.random() > 0.5 ? "start" : "end";
 
-  const gridStyle = {
-    "--border-style": borderStyle,
-  } as React.CSSProperties;
+      return {
+        id: i,
+        color: beamColors[i % beamColors.length],
+        direction,
+        startPosition,
+        gridLine:
+          direction === "horizontal"
+            ? Math.floor(Math.random() * (rows - 1)) + 1
+            : Math.floor(Math.random() * (cols - 1)) + 1,
+        delay: Math.random() * 2,
+        duration: speed + Math.random() * 2,
+      };
+    });
+  }, [count, beamColors, speed, cols, rows, isClient]);
+
+  const gridStyle = { "--border-style": borderStyle } as React.CSSProperties;
+
+  if (!isClient) return null; // شرط روی render نهایی
 
   return (
     <motion.div
@@ -127,7 +126,6 @@ function GridBackground({
           borderBottomStyle: borderStyle,
         }}
       >
-        {/* Grid Cells */}
         {Array.from({ length: cols * rows }).map((_, index) => (
           <div
             key={index}
@@ -144,7 +142,6 @@ function GridBackground({
 
       {/* Animated Beams */}
       {animatedBeams.map((beam) => {
-        // Calculate exact grid line positions as percentages
         const horizontalPosition = (beam.gridLine / rows) * 100;
         const verticalPosition = (beam.gridLine / cols) * 100;
 
@@ -160,39 +157,33 @@ function GridBackground({
             style={{
               ...(beam.direction === "horizontal"
                 ? {
-                    // Position exactly on the horizontal grid line
                     top: `${horizontalPosition}%`,
                     left:
                       beam.startPosition === "start"
                         ? "-12px"
                         : "calc(100% + 12px)",
-                    transform: "translateY(-50%)", // Center on the line
+                    transform: "translateY(-50%)",
                   }
                 : {
-                    // Position exactly on the vertical grid line
                     left: `${verticalPosition}%`,
                     top:
                       beam.startPosition === "start"
                         ? "-12px"
                         : "calc(100% + 12px)",
-                    transform: "translateX(-50%)", // Center on the line
+                    transform: "translateX(-50%)",
                   }),
             }}
-            initial={{
-              opacity: 0,
-            }}
+            initial={{ opacity: 0 }}
             animate={{
               opacity: [0, 1, 1, 0],
               ...(beam.direction === "horizontal"
                 ? {
-                    // Move across the full width of the container
                     x:
                       beam.startPosition === "start"
                         ? [0, "calc(100vw + 24px)"]
                         : [0, "calc(-100vw - 24px)"],
                   }
                 : {
-                    // Move across the full height of the container
                     y:
                       beam.startPosition === "start"
                         ? [0, "calc(100vh + 24px)"]
@@ -203,9 +194,9 @@ function GridBackground({
               duration: beam.duration,
               delay: beam.delay,
               repeat: Infinity,
-              repeatDelay: Math.random() * 3 + 2, // 2-5s pause between repeats
+              repeatDelay: Math.random() * 3 + 2,
               ease: "linear",
-              times: [0, 0.1, 0.9, 1], // Quick fade in, maintain, quick fade out
+              times: [0, 0.1, 0.9, 1],
             }}
           />
         );
