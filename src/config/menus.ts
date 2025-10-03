@@ -1,14 +1,5 @@
 // menusDashboard.ts
 import { MenuGroup } from "@/types/menu";
-import {
-  BarChart,
-  BookOpen,
-  Home,
-  PlusCircle,
-  Settings,
-  User,
-  Users,
-} from "lucide-react";
 
 export const menusDashboard: { [role: string]: MenuGroup[] } = {
   admin: [
@@ -19,13 +10,13 @@ export const menusDashboard: { [role: string]: MenuGroup[] } = {
           label: "Dashboard",
           fa_label: "داشبورد",
           path: "/admin",
-          icon: Home,
+          // icon: Home,
         },
         {
           label: "Reports",
           fa_label: "گزارشات",
           path: "/admin/reports",
-          icon: BarChart,
+          // icon: BarChart,
         },
       ],
     },
@@ -41,13 +32,13 @@ export const menusDashboard: { [role: string]: MenuGroup[] } = {
               label: "Users",
               fa_label: "کاربران",
               path: "/admin/users",
-              icon: Users,
+              // icon: Users,
             },
             {
               label: "Settings",
               fa_label: "تنظیمات",
               path: "/admin/settings",
-              icon: Settings,
+              // icon: Settings,
             },
           ],
         },
@@ -63,31 +54,31 @@ export const menusDashboard: { [role: string]: MenuGroup[] } = {
           label: "Dashboard",
           fa_label: "داشبورد",
           path: "/instructor",
-          icon: Home,
+          // icon: Home,
         },
         {
           label: "Students",
           fa_label: "دانشجویان",
           path: "/instructor/students",
-          icon: Users,
+          // icon: Users,
         },
         {
           label: "Courses",
           fa_label: "دوره‌ها",
           path: "/instructor/courses",
-          icon: BookOpen,
+          // icon: BookOpen,
           subMenus: [
             {
               label: "My Courses",
               fa_label: "دوره‌های من",
               path: "/instructor/courses/my",
-              icon: BookOpen,
+              // icon: BookOpen,
             },
             {
               label: "Create Course",
               fa_label: "ایجاد دوره",
               path: "/instructor/courses/create",
-              icon: PlusCircle,
+              // icon: PlusCircle,
             },
           ],
         },
@@ -103,25 +94,25 @@ export const menusDashboard: { [role: string]: MenuGroup[] } = {
           label: "Dashboard",
           fa_label: "داشبورد",
           path: "/user",
-          icon: Home,
+          // icon: Home,
         },
         {
           label: "Account",
           fa_label: "حساب کاربری",
           path: "/user/account",
-          icon: User,
+          // icon: User,
           subMenus: [
             {
               label: "Profile",
               fa_label: "پروفایل",
               path: "/user/profile",
-              icon: User,
+              // icon: User,
             },
             {
               label: "Settings",
               fa_label: "تنظیمات",
               path: "/user/settings",
-              icon: Settings,
+              // icon: Settings,
             },
           ],
         },
