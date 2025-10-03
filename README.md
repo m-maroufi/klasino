@@ -89,7 +89,7 @@
 برای اطلاعات بیشتر در مورد تکنولوژی‌های استفاده‌شده:
 
 - [مستندات Next.js](https://nextjs.org/docs)
-- [مستندات Better Auth JS](https://authjs.dev/)
+- [مستندات Better Auth JS](https://www.better-auth.com/)
 - [مستندات ShadcnUI](https://ui.shadcn.com/)
 - [مستندات Drizzle ORM](https://orm.drizzle.team/)
 - [مستندات Neon DB](https://neon.tech/docs)
