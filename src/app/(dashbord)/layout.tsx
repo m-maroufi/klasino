@@ -20,10 +20,22 @@ async function getSessionData(): Promise<SessionData | null> {
   }
 
   const role = session.user.role;
-  return {
-    user: session.user,
+
+  // فقط داده‌های plain object
+  const sessionData = {
+    user: {
+      id: session.user.id,
+      name: session.user.name,
+      email: session.user.email,
+      role: session.user.role,
+      image: session.user.image,
+    },
     menus: menusDashboard[role] || [],
   };
+  // سریالایز کردن کامل
+  const serializedSession = JSON.parse(JSON.stringify(sessionData));
+
+  return serializedSession;
 }
 export default async function DashboardLayout({
   children,
