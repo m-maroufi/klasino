@@ -6,6 +6,7 @@ import PaymentButton from "@/components/marketing/widget/PaymentButton";
 import { BreadcrumbsLinks } from "@/components/shared";
 import { Separator } from "@/components/ui/separator";
 import { getCourseBySlug } from "@/db/queries";
+import { notFound } from "next/navigation";
 
 type Props = {
   params: Promise<{ slug: string }>;
@@ -15,7 +16,9 @@ export default async function CourseDetailsPage({ params }: Props) {
   const { slug } = await params;
   // Fetch course details using the slug if needed
   const course = await getCourseBySlug(slug);
-
+  if (!course) {
+    notFound();
+  }
   return (
     <main className="min-h-screen mt-20">
       <section className="container">
