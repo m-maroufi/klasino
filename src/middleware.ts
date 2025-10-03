@@ -1,6 +1,5 @@
 import { auth } from "@/lib/auth";
 import { NextRequest, NextResponse } from "next/server";
-
 export async function middleware(request: NextRequest) {
   console.log("req", request.headers);
   const session = await auth.api.getSession({
@@ -34,5 +33,5 @@ export async function middleware(request: NextRequest) {
 // فقط روی روت‌های داشبورد اعمال بشه
 export const config = {
   matcher: ["/admin/:path*", "/instructor/:path*", "/student/:path*"],
-  // runtime: "nodejs",
+  runtime: "nodejs",
 };
