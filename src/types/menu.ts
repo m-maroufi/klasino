@@ -4,6 +4,7 @@ export interface MenuItem {
   label: string; // نام انگلیسی
   fa_label: string; // نام فارسی
   path: string; // مسیر
+  icon?: string | null;
   permissions?: string[];
   subMenus?: MenuItem[];
 }
