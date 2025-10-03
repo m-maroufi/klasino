@@ -11,8 +11,8 @@ const vazir = Vazirmatn({
   weight: ["100", "300", "400", "500"],
   style: "normal",
   display: "swap",
+  subsets: ["arabic", "latin-ext"],
   preload: false,
-  subsets: ["arabic"],
   // ← اضافه کن
 });
 
