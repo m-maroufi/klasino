@@ -1,9 +1,9 @@
 import { auth } from "@/lib/auth";
+import { headers } from "next/headers";
 import { NextRequest, NextResponse } from "next/server";
 export async function middleware(request: NextRequest) {
-  console.log("req", request.headers);
   const session = await auth.api.getSession({
-    headers: request.headers,
+    headers: await headers(),
   });
   console.log(session);
 
@@ -13,7 +13,6 @@ export async function middleware(request: NextRequest) {
   const role = session.user.role;
   const path = request.nextUrl.pathname;
   const currentUrl = request.url;
-  console.log(currentUrl);
 
   // نقش admin فقط به مسیرهای /admin دسترسی داره
   if (path.startsWith("/admin") && role !== "admin") {
@@ -33,7 +32,5 @@ export async function middleware(request: NextRequest) {
 // فقط روی روت‌های داشبورد اعمال بشه
 export const config = {
   matcher: ["/admin/:path*", "/instructor/:path*", "/student/:path*"],
-  ...(process.env.ENV_RUNTIM !== "DEV" || !process.env.ENV_RUNTIM
-    ? { runtime: "nodejs" }
-    : {}),
+  runtime: "nodejs",
 };
