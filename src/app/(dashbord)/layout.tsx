@@ -1,8 +1,9 @@
 import { AppSidebar } from "@/components/app-sidebar";
 import DashboardHeader from "@/components/dashboard/layout/DashboardHeader";
-import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
-import { User } from "@/lib/auth";
-import { MenuGroup, MenuItem } from "@/types/menu";
+import { SidebarProvider } from "@/components/ui/sidebar";
+import { menusDashboard } from "@/config/menus";
+import { auth, User } from "@/lib/auth";
+import { MenuGroup } from "@/types/menu";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 interface SessionData {
@@ -10,17 +11,19 @@ interface SessionData {
   menus: MenuGroup[];
 }
 async function getSessionData(): Promise<SessionData | null> {
-  const response = await fetch(
-    `${process.env.NEXT_PUBLIC_BASE_URL}/api/session`,
-    {
-      headers: await headers(),
-      cache: "force-cache",
-    }
-  );
-  if (!response.ok) {
+  const session = await auth.api.getSession({
+    headers: await headers(),
+  }); // مستقیم از Better Auth
+
+  if (!session?.user) {
     return null;
   }
-  return await response.json();
+
+  const role = session.user.role;
+  return {
+    user: session.user,
+    menus: menusDashboard[role] || [],
+  };
 }
 export default async function DashboardLayout({
   children,
