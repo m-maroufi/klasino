@@ -8,11 +8,10 @@ export const metadata: Metadata = {
 };
 const vazir = Vazirmatn({
   variable: "--vazir",
-  subsets: ["arabic"],
   weight: ["100", "300", "400", "500"],
-  preload: true,
   style: "normal",
   display: "swap",
+  subsets: ["arabic"], // ← اضافه کن
 });
 
 export default function RootLayout({
