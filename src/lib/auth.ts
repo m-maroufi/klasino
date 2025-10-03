@@ -1,3 +1,4 @@
+"use server";
 export const runtime = "nodejs";
 import db from "@/db";
 import { account, session, users, verification } from "@/db/schema";
