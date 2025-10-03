@@ -29,7 +29,7 @@ export default function Sidebar({
             <div className="flex items-center justify-between">
               <a href={menu.path} className="block py-2 hover:bg-gray-700">
                 {menu.icon && <span className="mr-2">{/* رندر آیکون */}</span>}
-                {menu.fa_lable}
+                {menu.fa_label}
               </a>
               {menu.subMenus && menu.subMenus.length > 0 && (
                 <button
