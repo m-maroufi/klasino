@@ -2,7 +2,6 @@ import { auth } from "@/lib/auth";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function middleware(request: NextRequest) {
-  console.log("🔹 Middleware running:", request.nextUrl.pathname);
   const session = await auth.api.getSession({
     headers: request.headers,
   });
