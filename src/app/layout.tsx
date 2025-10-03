@@ -11,7 +11,9 @@ const vazir = Vazirmatn({
   weight: ["100", "300", "400", "500"],
   style: "normal",
   display: "swap",
-  subsets: ["arabic"], // ← اضافه کن
+  preload: false,
+  subsets: ["arabic"],
+  // ← اضافه کن
 });
 
 export default function RootLayout({
