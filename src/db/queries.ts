@@ -1,7 +1,7 @@
 "use server";
-import { count, desc, eq } from "drizzle-orm";
+import { count, desc, eq, sql } from "drizzle-orm";
 import db from "./index";
-import { categories, courses, purchases, users } from "./schema";
+import { categories, courses, purchases, reviews, users } from "./schema";
 
 export async function getAllCourses(limit: number = 12) {
   try {
@@ -78,5 +78,57 @@ export async function getCategories() {
   } catch (error) {
     console.error("Error fetching categories:", error);
     return []; // آرایه خالی اگر مشکل اتصال پیش آمد
+  }
+}
+
+// ✅ Type خروجی تابع
+export type InstructorCourse = {
+  id: string;
+  title: string;
+  slug: string;
+  thumbnailUrl: string | null;
+  price: number | null;
+  isPublished: boolean;
+  status: string;
+  createdAt: Date;
+  instructorName: string | null;
+  students_count: number;
+  average_rating: number;
+};
+
+export async function getCoursesByInstructor(
+  instructorId: string
+): Promise<InstructorCourse[]> {
+  try {
+    const instructorCourses = await db
+      .select({
+        id: courses.id,
+        title: courses.title,
+        slug: courses.slug,
+        thumbnailUrl: courses.thumbnailUrl,
+        price: courses.price,
+        isPublished: courses.isPublished,
+        status: courses.status,
+        createdAt: courses.createdAt,
+        instructorName: users.name,
+        students_count: sql<number>`COUNT(DISTINCT ${purchases.userId})`.as(
+          "students_count"
+        ),
+        average_rating: sql<number>`COALESCE(AVG(${reviews.rating}), 0)`.as(
+          "average_rating"
+        ),
+      })
+      .from(courses)
+      .leftJoin(users, eq(users.id, courses.instructorId))
+      .leftJoin(purchases, eq(purchases.courseId, courses.id))
+      .leftJoin(reviews, eq(reviews.courseId, courses.id))
+      .where(eq(courses.instructorId, instructorId))
+      .groupBy(courses.id, users.name)
+      .orderBy(courses.createdAt);
+
+    return instructorCourses;
+  } catch (error) {
+    console.error("❌ Error fetching instructor courses:", error);
+    return [];
   }
 }

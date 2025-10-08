@@ -5,14 +5,14 @@ export async function middleware(request: NextRequest) {
   const session = await auth.api.getSession({
     headers: await headers(),
   });
-  console.log(session);
+  // console.log(session);
 
   if (!session?.user) {
     return NextResponse.redirect(new URL("/sign-in", request.url));
   }
   const role = session.user.role;
   const path = request.nextUrl.pathname;
-  const currentUrl = request.url;
+  // const currentUrl = request.url;
 
   // نقش admin فقط به مسیرهای /admin دسترسی داره
   if (path.startsWith("/admin") && role !== "admin") {

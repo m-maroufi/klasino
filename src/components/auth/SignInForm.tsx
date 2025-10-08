@@ -61,7 +61,7 @@ const SignInForm = () => {
     const { email, password } = data;
     try {
       const result = await signIn(email, password);
-      console.log(result);
+
       if (
         (result?.statusCode && result.statusCode === 401) ||
         result?.statusText === "UNAUTHORIZED"

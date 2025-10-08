@@ -25,6 +25,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 import { User } from "@/lib/auth";
 import { MenuGroup } from "@/types/menu";
 import { getRoleLabel } from "@/types/role";
+import Link from "next/link";
 
 type SidebarData = {
   user: User;
@@ -84,12 +85,12 @@ export function AppSidebar({ user, menus }: SidebarData) {
                               {item.subMenus.map((sub) => (
                                 <SidebarMenuItem key={sub.fa_label}>
                                   <SidebarMenuButton asChild>
-                                    <a
+                                    <Link
                                       href={sub.path}
                                       className="flex items-center gap-2"
                                     >
                                       <span>{sub.fa_label}</span>
-                                    </a>
+                                    </Link>
                                   </SidebarMenuButton>
                                 </SidebarMenuItem>
                               ))}
@@ -104,9 +105,12 @@ export function AppSidebar({ user, menus }: SidebarData) {
                   return (
                     <SidebarMenuItem key={item.fa_label}>
                       <SidebarMenuButton asChild>
-                        <a href={item.path} className="flex items-center gap-2">
+                        <Link
+                          href={item.path}
+                          className="flex items-center gap-2"
+                        >
                           <span>{item.fa_label}</span>
-                        </a>
+                        </Link>
                       </SidebarMenuButton>
                     </SidebarMenuItem>
                   );
