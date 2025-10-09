@@ -1,6 +1,7 @@
 import { CourseCardContainer } from "@/components/dashboard/instructor/CourseCardContainer";
 import { TitleSection } from "@/components/shared";
 import { auth } from "@/lib/auth";
+import ReactQueryProvider from "@/provider/ReactQueryProvider";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { Suspense } from "react";
@@ -19,7 +20,9 @@ export default async function MyCoursesPage() {
     <div className="p-6">
       <TitleSection title="🎓 دوره‌های من" />
       <Suspense fallback={<h1>در حال بارگزاری ...</h1>}>
-        <CourseCardContainer instructorId={session.user.id} />
+        <ReactQueryProvider>
+          <CourseCardContainer instructorId={session.user.id} />
+        </ReactQueryProvider>
       </Suspense>
     </div>
   );

@@ -1,4 +1,6 @@
-import { getCoursesByInstructor, InstructorCourse } from "@/db/queries";
+"use client";
+import { Skeleton } from "@/components/ui/skeleton";
+import { useInstructorCourses } from "@/hooks/useInstructorCourses";
 import CourseCard from "./CourseCard";
 
 type Course = {
@@ -9,45 +11,44 @@ type Course = {
   price: number;
   status: "active" | "draft";
 };
-const courses: Course[] = [
-  {
-    id: "1",
-    title: "آموزش Next.js پیشرفته",
-    thumbnail: "/images/next-course.jpg",
-    studentsCount: 120,
-    price: 490000,
-    status: "active",
-  },
-  {
-    id: "2",
-    title: "Node.js برای بک‌اند",
-    thumbnail: "/images/node-course.jpg",
-    studentsCount: 80,
-    price: 390000,
-    status: "draft",
-  },
-  {
-    id: "3",
-    title: "TypeScript کاربردی",
-    thumbnail: "/images/ts-course.jpg",
-    studentsCount: 54,
-    price: 290000,
-    status: "active",
-  },
-];
 
-export const CourseCardContainer = async ({
+export const CourseCardContainer = ({
   instructorId,
 }: {
   instructorId: string;
 }) => {
-  const courses: InstructorCourse[] = await getCoursesByInstructor(
-    instructorId
-  );
+  const { courses, isError, isLoading } = useInstructorCourses(instructorId);
+
+  if (isLoading) {
+    return (
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        {[1, 2, 3].map((_, i) => (
+          <div key={i} className="flex flex-col space-y-3">
+            <Skeleton className="h-[125px] w-[250px] rounded-xl" />
+            <div className="space-y-2">
+              <Skeleton className="h-4 w-[250px]" />
+              <Skeleton className="h-4 w-[200px]" />
+            </div>
+          </div>
+        ))}
+      </div>
+    );
+  }
+  if (isError) {
+    return (
+      <div>
+        <h4>خطا</h4>
+      </div>
+    );
+  }
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-      {courses.map((course) => (
-        <CourseCard course={course} key={course.id} />
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-8">
+      {courses?.map((course) => (
+        <CourseCard
+          course={course}
+          key={course.id}
+          instructorId={instructorId}
+        />
       ))}
     </div>
   );

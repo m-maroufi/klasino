@@ -132,3 +132,62 @@ export async function getCoursesByInstructor(
     return [];
   }
 }
+
+export async function getCourseById(id: string) {
+  try {
+    // 1️⃣ گرفتن اطلاعات اصلی دوره
+    const course = await db.query.courses.findFirst({
+      where: eq(courses.id, id),
+      with: {
+        // 2️⃣ گرفتن دسته‌بندی‌های مرتبط (اختیاری)
+        courseCategories: {
+          with: {
+            category: true,
+          },
+        },
+      },
+    });
+
+    // 3️⃣ بررسی وجود دوره
+    if (!course) {
+      return {
+        success: false,
+        message: "دوره پیدا نشد.",
+        data: null,
+      };
+    }
+
+    // 4️⃣ آماده‌سازی خروجی نهایی
+    return {
+      success: true,
+      message: "✅ دوره با موفقیت دریافت شد.",
+      data: {
+        id: course.id,
+        title: course.title,
+        slug: course.slug,
+        price: course.price,
+        description: course.description,
+        thumbnailUrl: course.thumbnailUrl,
+        status: course.status,
+        isPublished: course.isPublished,
+        level: course.level,
+        language: course.language,
+        duration: course.duration,
+        // دسته‌بندی‌ها
+        categories:
+          course.courseCategories?.map((cc) => ({
+            id: cc.category.id,
+            name: cc.category.name,
+            slug: cc.category.slug,
+          })) ?? [],
+      },
+    };
+  } catch (error) {
+    console.error("❌ Error in getCourseById:", error);
+    return {
+      success: false,
+      message: "خطایی در دریافت اطلاعات دوره رخ داد.",
+      data: null,
+    };
+  }
+}

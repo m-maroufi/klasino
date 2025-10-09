@@ -4,13 +4,30 @@ import { useState } from "react";
 import CreateCouresForm from "./CreateCouresForm";
 import ManageLessons from "./ManageLessons";
 import ManageSections from "./ManageSections";
-interface CourseType {
+export interface CourseType {
   id: string;
   title: string;
   description: string | null;
+  slug: string;
+  price: number | null;
+  thumbnailUrl: string | null;
+  status: "ongoing" | "completed" | "preorder";
+  isPublished: boolean;
+  level: string | null;
+  language: string | null;
+  duration: number | null;
+  categories: { id: string; name: string; slug: string }[];
 }
-export default function CreateCourseWizard() {
-  const [course, setCourse] = useState<CourseType | null>(null);
+
+interface CreateCourseWizardProps {
+  initialCourse?: CourseType;
+  mode?: "create" | "edit";
+}
+export default function CreateCourseWizard({
+  initialCourse,
+  mode = "create",
+}: CreateCourseWizardProps) {
+  const [course, setCourse] = useState<CourseType | undefined>(initialCourse);
 
   return (
     <Tabs
@@ -30,7 +47,11 @@ export default function CreateCourseWizard() {
 
       <TabsContent value="course">
         {/* onCreated={(id) => setCourseId(id)} */}
-        <CreateCouresForm onCreated={(course) => setCourse(course)} />
+        <CreateCouresForm
+          onCreated={(course) => setCourse(course)}
+          mode={mode}
+          initialData={initialCourse}
+        />
       </TabsContent>
 
       <TabsContent value="sections">

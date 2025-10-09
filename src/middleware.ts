@@ -32,5 +32,5 @@ export async function middleware(request: NextRequest) {
 // فقط روی روت‌های داشبورد اعمال بشه
 export const config = {
   matcher: ["/admin/:path*", "/instructor/:path*", "/student/:path*"],
-  runtime: "nodejs",
+  // runtime: "nodejs",
 };

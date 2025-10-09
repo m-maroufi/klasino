@@ -1,6 +1,6 @@
 "use client";
 
-import { createCourse } from "@/actions/create-course";
+import { createCourse, updateCourse } from "@/actions/create-course";
 import ImageUpload from "@/components/shared/ImageUploader";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -34,12 +34,13 @@ import { useSlug } from "@/hooks/useSlug";
 import { cn } from "@/lib/utils";
 import { CreateCourseFormSchema } from "@/lib/validator.shema";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Check, ChevronsUpDown } from "lucide-react";
+import { Check, ChevronsUpDown, Loader2 } from "lucide-react";
 import dynamic from "next/dynamic";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import z from "zod";
+import { CourseType } from "./CreateCousesWizard";
 
 // QuillEditor رو فقط کلاینتی لود کن
 const QuillEditor = dynamic(
@@ -63,12 +64,12 @@ export const categories = [
 
 const CreateCouresForm = ({
   onCreated,
+  mode = "create",
+  initialData,
 }: {
-  onCreated: (course: {
-    id: string;
-    title: string;
-    description: string | null;
-  }) => void;
+  onCreated: (course: CourseType) => void;
+  mode?: "create" | "edit";
+  initialData?: any;
 }) => {
   const [categoriesList, setCategoriesList] = useState<
     { name: string; id: string; slug: string }[]
@@ -78,46 +79,90 @@ const CreateCouresForm = ({
     reValidateMode: "onChange",
     mode: "onSubmit",
     defaultValues: {
-      title: "",
-      slug: "",
-      description: "",
-      thumbnailUrl: "",
-      isPublished: false,
-      level: "beginner",
-      language: "فارسی",
-      status: "preorder",
-      category: [],
+      ...initialData,
+      category: initialData?.categories
+        ? initialData.categories.map((cat: any) => cat.id)
+        : [],
+      thumbnailUrl: initialData?.thumbnailUrl ?? "",
     },
   });
 
   const title = form.watch("title");
   const slug = useSlug(title);
   useEffect(() => {
-    form.setValue("slug", slug, { shouldValidate: true });
-    console.log(form.getValues("description"));
-  }, [slug, form]);
+    if (mode === "create") {
+      form.setValue("slug", slug, { shouldValidate: true });
+    }
+  }, [slug, form, mode]);
+
   async function onsubmitHandler(data: z.infer<typeof CreateCourseFormSchema>) {
-    const result = await createCourse(data);
-    if (result.success && result.data) {
-      onCreated?.({
-        id: result.data.id,
-        title: result.data.title,
-        description: result.data.description,
+    if (mode === "edit" && initialData?.id) {
+      const result = await updateCourse({
+        courseId: initialData.id,
+        values: data,
       });
-      toast.success(` دوره ${result.data.title} با موفقیت ایجاد شد`, {
-        richColors: true,
-      });
-      form.reset();
+      if (result.success && result.data) {
+        onCreated?.({
+          id: result.data.id,
+          title: result.data.title,
+          description: result.data.description,
+          slug: result.data.slug,
+          price: result.data.price ?? null,
+          thumbnailUrl: result.data.thumbnailUrl ?? null,
+          status: result.data.status,
+          isPublished: result.data.isPublished,
+          level: result.data.level ?? null,
+          language: result.data.language ?? null,
+          duration: result.data.duration ?? null,
+          categories: result.data.categories ?? [],
+        });
+
+        toast.success("✅ دوره با موفقیت ویرایش شد.", {
+          richColors: true,
+        });
+      } else {
+        toast.error(result.message || "خطا در ویرایش دوره");
+      }
+    } else {
+      const result = await createCourse(data);
+      if (result.success && result.data) {
+        onCreated?.({
+          id: result.data.id,
+          title: result.data.title,
+          description: result.data.description,
+          slug: result.data.slug,
+          price: result.data.price ?? null,
+          thumbnailUrl: result.data.thumbnailUrl ?? null,
+          status: result.data.status,
+          isPublished: result.data.isPublished,
+          level: result.data.level ?? null,
+          language: result.data.language ?? null,
+          duration: result.data.duration ?? null,
+          categories: result.data.categories ?? [],
+        });
+
+        toast.success(`دوره ${result.data.title} با موفقیت ایجاد شد`);
+        form.reset();
+      }
     }
   }
 
   useEffect(() => {
-    async function fetchCategories() {
+    let active = true;
+    (async () => {
       const cats = await getCategories();
-      setCategoriesList(cats);
-    }
-    fetchCategories();
+      if (active) setCategoriesList(cats);
+    })();
+    return () => {
+      active = false;
+    };
   }, []);
+
+  useEffect(() => {
+    if (initialData) {
+      form.reset(initialData);
+    }
+  }, [initialData]);
 
   return (
     <div className="py-6">
@@ -466,7 +511,22 @@ const CreateCouresForm = ({
             />
           </div>
           <div className="btn mt-6">
-            <Button type="submit">ایجاد دوره و ادامه</Button>
+            <Button
+              type="submit"
+              disabled={form.formState.isSubmitting || form.formState.isLoading}
+              className="flex items-center gap-2"
+            >
+              {form.formState.isSubmitting || form.formState.isLoading ? (
+                <>
+                  <Loader2 className="animate-spin h-4 w-4" />
+                  لطفاً صبر کنید...
+                </>
+              ) : mode === "edit" ? (
+                "ذخیره تغییرات"
+              ) : (
+                "ایجاد دوره و ادامه"
+              )}
+            </Button>
           </div>
         </form>
       </Form>

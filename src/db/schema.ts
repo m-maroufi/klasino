@@ -1,3 +1,4 @@
+import { relations } from "drizzle-orm";
 import {
   boolean,
   integer,
@@ -222,3 +223,85 @@ export const courseCategories = pgTable(
     }),
   ]
 );
+
+// ================= RELATIONS =================
+
+// --- User relations ---
+export const userRelations = relations(users, ({ many }) => ({
+  courses: many(courses),
+  purchases: many(purchases),
+  reviews: many(reviews),
+}));
+
+// --- Course relations ---
+export const courseRelations = relations(courses, ({ one, many }) => ({
+  instructor: one(users, {
+    fields: [courses.instructorId],
+    references: [users.id],
+  }),
+  sections: many(sections),
+  courseCategories: many(courseCategories),
+  purchases: many(purchases),
+  reviews: many(reviews),
+}));
+
+// --- Section relations ---
+export const sectionRelations = relations(sections, ({ one, many }) => ({
+  course: one(courses, {
+    fields: [sections.courseId],
+    references: [courses.id],
+  }),
+  lessons: many(lessons),
+}));
+
+// --- Lesson relations ---
+export const lessonRelations = relations(lessons, ({ one }) => ({
+  section: one(sections, {
+    fields: [lessons.sectionId],
+    references: [sections.id],
+  }),
+}));
+
+// --- Category relations ---
+export const categoryRelations = relations(categories, ({ many }) => ({
+  courseCategories: many(courseCategories),
+}));
+
+// --- CourseCategory (pivot table) relations ---
+export const courseCategoryRelations = relations(
+  courseCategories,
+  ({ one }) => ({
+    course: one(courses, {
+      fields: [courseCategories.courseId],
+      references: [courses.id],
+    }),
+    category: one(categories, {
+      fields: [courseCategories.categoryId],
+      references: [categories.id],
+    }),
+  })
+);
+
+// --- Purchase relations ---
+export const purchaseRelations = relations(purchases, ({ one }) => ({
+  user: one(users, {
+    fields: [purchases.userId],
+    references: [users.id],
+  }),
+  course: one(courses, {
+    fields: [purchases.courseId],
+    references: [courses.id],
+  }),
+}));
+
+// --- Review relations ---
+export const reviewRelations = relations(reviews, ({ one }) => ({
+  user: one(users, {
+    fields: [reviews.userId],
+    references: [users.id],
+  }),
+  course: one(courses, {
+    fields: [reviews.courseId],
+    references: [courses.id],
+  }),
+}));

@@ -8,15 +8,34 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { InstructorCourse } from "@/db/queries";
+import { useInstructorCourses } from "@/hooks/useInstructorCourses";
 import { MoreVertical } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
+import { DeleteCourseDialog } from "./DeleteCourseDialog";
 
-const CourseCard = ({ course }: { course: InstructorCourse }) => {
-  const handleEdit = (id: string) => {
-    console.log("ویرایش دوره:", id);
+const CourseCard = ({
+  course,
+  instructorId,
+}: {
+  course: InstructorCourse;
+  instructorId: string;
+}) => {
+  const { deleteCourse } = useInstructorCourses(instructorId);
+  const router = useRouter();
+  const [open, setIsOpen] = useState(false);
+
+  const onOpenDialog = () => {
+    setIsOpen(!open);
   };
 
-  const handleDelete = (id: string) => {
-    console.log("حذف دوره:", id);
+  const handleEdit = (id: string) => {
+    router.push(`/instructor/courses/edit/${id}`);
+  };
+
+  const handleDelete = async (id: string) => {
+    await deleteCourse(id);
+    setIsOpen(false);
   };
   return (
     <Card
@@ -44,11 +63,8 @@ const CourseCard = ({ course }: { course: InstructorCourse }) => {
             <DropdownMenuItem onClick={() => handleEdit(course.id)}>
               ✏️ ویرایش
             </DropdownMenuItem>
-            <DropdownMenuItem
-              onClick={() => handleDelete(course.id)}
-              className="text-red-500"
-            >
-              🗑 حذف
+            <DropdownMenuItem onClick={() => onOpenDialog()}>
+              ❌ حذف
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
@@ -90,6 +106,12 @@ const CourseCard = ({ course }: { course: InstructorCourse }) => {
           </div>
         </div>
       </CardContent>
+      <DeleteCourseDialog
+        courseId={course.id}
+        onDelete={handleDelete}
+        open={open}
+        onOpenDialog={onOpenDialog}
+      />
     </Card>
   );
 };
