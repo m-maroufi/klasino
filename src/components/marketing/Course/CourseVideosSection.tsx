@@ -17,7 +17,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog"; // shadcn Dialog
-import { DownloadCloud, Play, Timer } from "lucide-react";
+import { BookOpen, DownloadCloud, Lock, Play, Timer } from "lucide-react";
 import { useState } from "react";
 import ReactPlayer from "react-player";
 import { toast } from "sonner";
@@ -84,23 +84,58 @@ const CourseVideosSection = ({ slug }: { slug: string }) => {
                           {/* می‌تونی از فانکشن durationReadable استفاده کنی */}
                           {formatDurationReadable(lesson.duration || 0)}
                         </Badge>
+                        {lesson.isPreview && (
+                          <>
+                            {" "}
+                            <Badge className="bg-blue-500/10 text-blue-700">
+                              <BookOpen size={14} />
+                              رایگان
+                            </Badge>
+                          </>
+                        )}
                       </div>
                       <div className="flex items-center gap-2">
-                        <a
-                          href={lesson.videoUrl ?? undefined}
-                          download={`${lesson.order}-${lesson.title.replace(
-                            /[/\\?%*:|"<>]/g,
-                            "-"
-                          )}.mp4`}
-                        >
-                          <Button variant="outline" asChild>
-                            <Badge className="bg-green-500/10 text-green-500 text-xs">
-                              <DownloadCloud size={14} />
-                              دانلود
+                        {lesson.isPreview ? (
+                          <>
+                            {" "}
+                            <a
+                              href={lesson.videoUrl ?? undefined}
+                              download={`${lesson.order}-${lesson.title.replace(
+                                /[/\\?%*:|"<>]/g,
+                                "-"
+                              )}.mp4`}
+                            >
+                              <Button variant="outline" asChild>
+                                <Badge className="bg-green-500/10 text-green-500 text-xs">
+                                  <DownloadCloud size={14} />
+                                  دانلود
+                                </Badge>
+                              </Button>
+                            </a>
+                          </>
+                        ) : (
+                          <Button
+                            variant="outline"
+                            asChild
+                            onClick={() => {
+                              if (lesson.isPreview) {
+                                return;
+                              } else {
+                                toast.error(
+                                  "برای مشاهده باید ابتدا دوره را خریداری کنید",
+                                  {
+                                    richColors: true,
+                                  }
+                                );
+                              }
+                            }}
+                          >
+                            <Badge className="bg-amber-500/10 text-amber-500 text-xs">
+                              <Lock size={14} />
+                              خرید دوره
                             </Badge>
                           </Button>
-                        </a>
-
+                        )}
                         <Button
                           variant="outline"
                           asChild

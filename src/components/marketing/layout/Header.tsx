@@ -11,6 +11,7 @@ import {
 } from "@/components/ui/sheet";
 import { useMediaQuery } from "@/hooks/useMediaQuerys";
 import { Session } from "@/lib/auth";
+import { useCartStore } from "@/lib/cart-store";
 import { LucideMenuSquare, LucideShoppingBag } from "lucide-react";
 import { motion } from "motion/react";
 import Image from "next/image";
@@ -35,7 +36,7 @@ export const Header = ({ session }: { session: Session | null }) => {
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
-
+  const { itemCount } = useCartStore((state) => state);
   return (
     <motion.header
       initial={{ y: -80, opacity: 0 }}
@@ -81,9 +82,17 @@ export const Header = ({ session }: { session: Session | null }) => {
               <Navbar />
             </nav>
             <section className="flex items-center gap-4">
-              <Button variant="secondary" size="default" className="">
-                <LucideShoppingBag />
-              </Button>
+              <Link href={"/cart"}>
+                <Button variant="outline" size="default" className="relative">
+                  <LucideShoppingBag />
+                  {itemCount > 0 && (
+                    <span className="p-1 w-8 h-8 bg-primary rounded-full text-white absolute -right-6 text-xs font-black flex items-center justify-center">
+                      {itemCount}
+                    </span>
+                  )}
+                </Button>
+              </Link>
+
               {!session && (
                 <Button asChild>
                   <Link href={"/sign-in"}>ورود</Link>
@@ -125,13 +134,12 @@ export const Header = ({ session }: { session: Session | null }) => {
                   </Link>
                 </li>
                 <li>
-                  <Link href={"/"} className="font-semibold text-sm">
-                    {" "}
+                  <Link href={"/contact-us"} className="font-semibold text-sm">
                     تماس با ما
                   </Link>
                 </li>
                 <li>
-                  <Link href={"/"} className="font-semibold text-sm">
+                  <Link href={"/course"} className="font-semibold text-sm">
                     {" "}
                     دوره
                   </Link>

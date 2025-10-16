@@ -15,7 +15,7 @@ const BreadcrumbsLinks = () => {
   const pathname = usePathname();
   const breadcrumbs = breadcrumbsGenrator(pathname);
   return (
-    <Breadcrumb>
+    <Breadcrumb className="mb-8 text-white/80 animate-fade-in">
       <BreadcrumbList>
         {breadcrumbs.map((item, index) => (
           <React.Fragment key={item.href || index}>

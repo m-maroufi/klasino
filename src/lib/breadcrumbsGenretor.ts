@@ -9,6 +9,7 @@ const labelMapRecord: Record<string, string> = {
   about: "درباره ما",
   contact_us: "تماس با ما",
   dashboard: "پنل کاربری",
+  cart: "سبد خرید",
 };
 
 export function breadcrumbsGenrator(pathname: string): BreadcrumbsItem[] {

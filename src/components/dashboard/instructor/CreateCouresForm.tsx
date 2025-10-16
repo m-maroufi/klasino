@@ -1,5 +1,3 @@
-"use client";
-
 import { createCourse, updateCourse } from "@/actions/create-course";
 import ImageUpload from "@/components/shared/ImageUploader";
 import { Button } from "@/components/ui/button";
@@ -29,7 +27,6 @@ import {
 } from "@/components/ui/popover";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { getCategories } from "@/db/queries";
-// import { getCategories } from "@/db/queries";
 import { useSlug } from "@/hooks/useSlug";
 import { cn } from "@/lib/utils";
 import { CreateCourseFormSchema } from "@/lib/validator.shema";
@@ -39,21 +36,21 @@ import dynamic from "next/dynamic";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
-import z from "zod";
+import { z } from "zod";
 import { CourseType } from "./CreateCousesWizard";
 
-// QuillEditor رو فقط کلاینتی لود کن
 const QuillEditor = dynamic(
   () => import("@/components/shared/QuillTextEditor"),
   {
-    ssr: false, // ❌ سرور رندر نشه
+    ssr: false,
   }
 );
+
 const languages = [
   { label: "English", value: "انگلیسی" },
   { label: "فارسی", value: "فارسی" },
 ] as const;
-const levels = [];
+
 export const categories = [
   { label: "برنامه نویسی", value: "programming" },
   { label: "طراحی وب", value: "web-design" },
@@ -79,16 +76,25 @@ const CreateCouresForm = ({
     reValidateMode: "onChange",
     mode: "onSubmit",
     defaultValues: {
-      ...initialData,
+      title: initialData?.title ?? "",
+      slug: initialData?.slug ?? "",
+      description: initialData?.description ?? "",
+      thumbnailUrl: initialData?.thumbnailUrl ?? "",
+      price: initialData?.price != null ? String(initialData.price) : "0",
+      duration: initialData?.duration ?? "", // تنظیم مقدار اولیه
+      isPublished: initialData?.isPublished ?? false,
+      level: initialData?.level ?? undefined,
+      language: initialData?.language ?? undefined,
+      status: initialData?.status ?? undefined,
       category: initialData?.categories
         ? initialData.categories.map((cat: any) => cat.id)
         : [],
-      thumbnailUrl: initialData?.thumbnailUrl ?? "",
     },
   });
 
   const title = form.watch("title");
   const slug = useSlug(title);
+
   useEffect(() => {
     if (mode === "create") {
       form.setValue("slug", slug, { shouldValidate: true });
@@ -96,18 +102,23 @@ const CreateCouresForm = ({
   }, [slug, form, mode]);
 
   async function onsubmitHandler(data: z.infer<typeof CreateCourseFormSchema>) {
+    const transformedData = {
+      ...data,
+      price: data.price ?? "0", // تبدیل به عدد برای ارسال به سرور
+    };
+
     if (mode === "edit" && initialData?.id) {
       const result = await updateCourse({
         courseId: initialData.id,
-        values: data,
+        values: transformedData,
       });
       if (result.success && result.data) {
-        onCreated?.({
+        onCreated({
           id: result.data.id,
           title: result.data.title,
           description: result.data.description,
           slug: result.data.slug,
-          price: result.data.price ?? null,
+          price: result.data.price?.toString() ?? "0", // اطمینان از عدد بودن
           thumbnailUrl: result.data.thumbnailUrl ?? null,
           status: result.data.status,
           isPublished: result.data.isPublished,
@@ -116,7 +127,6 @@ const CreateCouresForm = ({
           duration: result.data.duration ?? null,
           categories: result.data.categories ?? [],
         });
-
         toast.success("✅ دوره با موفقیت ویرایش شد.", {
           richColors: true,
         });
@@ -124,14 +134,14 @@ const CreateCouresForm = ({
         toast.error(result.message || "خطا در ویرایش دوره");
       }
     } else {
-      const result = await createCourse(data);
+      const result = await createCourse(transformedData);
       if (result.success && result.data) {
-        onCreated?.({
+        onCreated({
           id: result.data.id,
           title: result.data.title,
           description: result.data.description,
           slug: result.data.slug,
-          price: result.data.price ?? null,
+          price: result.data.price?.toString() ?? "0", // اطمینان از عدد بودن
           thumbnailUrl: result.data.thumbnailUrl ?? null,
           status: result.data.status,
           isPublished: result.data.isPublished,
@@ -140,9 +150,12 @@ const CreateCouresForm = ({
           duration: result.data.duration ?? null,
           categories: result.data.categories ?? [],
         });
-
-        toast.success(`دوره ${result.data.title} با موفقیت ایجاد شد`);
+        toast.success(`دوره ${result.data.title} با موفقیت ایجاد شد`, {
+          richColors: true,
+        });
         form.reset();
+      } else {
+        toast.error(result.message || "خطا در ایجاد دوره");
       }
     }
   }
@@ -160,9 +173,16 @@ const CreateCouresForm = ({
 
   useEffect(() => {
     if (initialData) {
-      form.reset(initialData);
+      form.reset({
+        ...initialData,
+        price: initialData.price != null ? String(initialData.price) : "",
+        category: initialData.categories
+          ? initialData.categories.map((cat: any) => cat.id)
+          : [],
+        thumbnailUrl: initialData.thumbnailUrl ?? "",
+      });
     }
-  }, [initialData]);
+  }, [initialData, form]);
 
   return (
     <div className="py-6">
@@ -178,7 +198,11 @@ const CreateCouresForm = ({
               <FormItem>
                 <FormLabel>عنوان دوره</FormLabel>
                 <FormControl>
-                  <Input placeholder="عنوان دوره کوتاه باشد" {...field} />
+                  <Input
+                    placeholder="عنوان دوره کوتاه باشد"
+                    {...field}
+                    className="bg-white"
+                  />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -193,8 +217,10 @@ const CreateCouresForm = ({
                 <FormControl>
                   <Input
                     disabled
+                    // value={field.value || ""}
                     placeholder="این فیلد بر اساس عنوان دوره خودکار تکمیل میگردد"
                     {...field}
+                    className="bg-white"
                   />
                 </FormControl>
                 <FormMessage />
@@ -210,16 +236,21 @@ const CreateCouresForm = ({
                   <FormLabel>قیمت دوره</FormLabel>
                   <FormControl>
                     <Input
-                      type="number"
-                      placeholder="قیمت دوره به تومان وارد کنید"
+                      placeholder="قیمت دوره به تومان (برای رایگان خالی بگذارید)"
                       {...field}
+                      className="bg-white"
                       value={field.value ?? ""}
                       onChange={(e) => {
-                        const val = parseInt(e.target.value);
-                        field.onChange(isNaN(val) ? "" : val);
+                        const value = e.target.value;
+                        if (value === "" || /^[0-9]*$/.test(value)) {
+                          field.onChange(value);
+                        }
                       }}
                     />
                   </FormControl>
+                  <FormDescription>
+                    برای دوره‌های رایگان، این فیلد را خالی بگذارید.
+                  </FormDescription>
                   <FormMessage />
                 </FormItem>
               )}
@@ -235,7 +266,8 @@ const CreateCouresForm = ({
                       type="number"
                       placeholder="مدت زمان بر حسب دقیقه"
                       {...field}
-                      value={field.value ?? ""}
+                      className="bg-white"
+                      value={field.value ?? ""} // این خط مشکلی ندارد، اما می‌توانید مستقیماً از field.value استفاده کنید
                       onChange={(e) => {
                         const val = e.target.valueAsNumber;
                         field.onChange(isNaN(val) ? "" : val);
@@ -338,7 +370,6 @@ const CreateCouresForm = ({
                       </Command>
                     </PopoverContent>
                   </Popover>
-
                   <FormMessage />
                 </FormItem>
               )}
@@ -389,38 +420,35 @@ const CreateCouresForm = ({
                       (می‌توانید چندین دسته‌بندی را انتخاب کنید)
                     </FormDescription>
                   </div>
-
                   {categoriesList.map((item) => (
                     <FormField
                       key={item.id}
                       control={form.control}
                       name="category"
-                      render={({ field }) => {
-                        return (
-                          <FormItem
-                            key={item.id}
-                            className="flex flex-row items-center gap-2"
-                          >
-                            <FormControl>
-                              <Checkbox
-                                checked={field.value?.includes(item.id)}
-                                onCheckedChange={(checked) => {
-                                  return checked
-                                    ? field.onChange([...field.value, item.id])
-                                    : field.onChange(
-                                        field.value?.filter(
-                                          (value) => value !== item.id
-                                        )
-                                      );
-                                }}
-                              />
-                            </FormControl>
-                            <FormLabel className="text-sm font-normal">
-                              {item.name}
-                            </FormLabel>
-                          </FormItem>
-                        );
-                      }}
+                      render={({ field }) => (
+                        <FormItem
+                          key={item.id}
+                          className="flex flex-row items-center gap-2"
+                        >
+                          <FormControl>
+                            <Checkbox
+                              checked={field.value?.includes(item.id)}
+                              onCheckedChange={(checked) => {
+                                return checked
+                                  ? field.onChange([...field.value, item.id])
+                                  : field.onChange(
+                                      field.value?.filter(
+                                        (value) => value !== item.id
+                                      )
+                                    );
+                              }}
+                            />
+                          </FormControl>
+                          <FormLabel className="text-sm font-normal">
+                            {item.name}
+                          </FormLabel>
+                        </FormItem>
+                      )}
                     />
                   ))}
                   <FormMessage />
@@ -428,7 +456,6 @@ const CreateCouresForm = ({
               )}
             />
           </div>
-
           <div className="grid gap-4 grid-cols-1 md:grid-cols-2">
             <FormField
               control={form.control}
@@ -467,7 +494,6 @@ const CreateCouresForm = ({
                 </FormItem>
               )}
             />
-
             <FormField
               control={form.control}
               name="status"

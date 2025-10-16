@@ -10,7 +10,7 @@ export default async function Home() {
   return (
     <section className="">
       <Hero />
-      <main className=" space-y-10 -mt-28 z-30 relative">
+      <main className=" space-y-10 mt-6 z-30 relative">
         <div className="container">
           <TitleSection
             title="جدید ترین دوره ها"

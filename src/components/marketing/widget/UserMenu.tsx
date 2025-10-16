@@ -1,5 +1,5 @@
 import { signOut } from "@/actions/auth-actions";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -9,8 +9,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Session } from "@/lib/auth";
-import { LogOut, User, UserCog2 } from "lucide-react";
-import Image from "next/image";
+import { LogOut, User } from "lucide-react";
 import Link from "next/link";
 
 import { useRouter } from "next/navigation";
@@ -27,22 +26,13 @@ export default function UserMenu({ session }: { session: Session }) {
   };
   return (
     <DropdownMenu dir="rtl">
-      <DropdownMenuTrigger className="focus:outline-hidden focus:ring-2 focus:ring-offset-2 focus:ring-primary rounded-full">
-        <Avatar>
-          {session.user.image ? (
-            <Image
-              src={session.user.image}
-              height={60}
-              width={60}
-              className="rounded-full"
-              alt="کاربر "
-            />
-          ) : (
-            <AvatarFallback>
-              <UserCog2 />
-            </AvatarFallback>
-          )}
-        </Avatar>
+      <DropdownMenuTrigger>
+        <Button variant={"default"} asChild>
+          <div>
+            <User />
+            {session.user.name}
+          </div>
+        </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent>
         <DropdownMenuLabel>{session.user.name}</DropdownMenuLabel>

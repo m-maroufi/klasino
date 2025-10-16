@@ -29,7 +29,7 @@ export async function createCourse(
   // 3️⃣ آماده‌سازی داده‌ها برای اینسرت
   const insertData = {
     title: validated.title ?? "",
-    price: validated.price ?? 0,
+    price: Number(validated.price) ?? 0,
     thumbnailUrl: validated.thumbnailUrl ?? "",
     slug: validated.slug ?? "",
     status: validated.status ?? "ongoing",
@@ -133,7 +133,7 @@ export async function updateCourse({
   // 4️⃣ آماده‌سازی داده‌ها برای آپدیت
   const updateData = {
     title: validated.title ?? existingCourse.title,
-    price: validated.price ?? existingCourse.price,
+    price: Number(validated.price) ?? existingCourse.price,
     thumbnailUrl: validated.thumbnailUrl ?? existingCourse.thumbnailUrl,
     slug: validated.slug || existingCourse.slug, // slug در صورت عدم تغییر همون قبلی بمونه
     status: validated.status ?? existingCourse.status,

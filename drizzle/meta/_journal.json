@@ -15,6 +15,13 @@
       "when": 1759417857060,
       "tag": "0001_absent_calypso",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1760417099799,
+      "tag": "0002_lovely_cassandra_nova",
+      "breakpoints": true
     }
   ]
 }

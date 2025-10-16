@@ -1,6 +1,6 @@
-import { Button } from "@/components/ui/button";
 import { formatPrice } from "@/lib/helper";
 import Link from "next/link";
+import AddToCart from "./AddToCart";
 interface CourseCardProps {
   courseId: string;
   title: string;
@@ -21,7 +21,7 @@ export function CardCourse({
 }: CourseCardProps) {
   return (
     <div className="w-full max-w-md mx-auto">
-      <div className="bg-white rounded-lg shadow-lg overflow-hidden transition-all duration-300 hover:shadow-xl dark:bg-gray-950">
+      <div className="bg-card rounded-lg shadow-lg overflow-hidden transition-all duration-300 hover:shadow-xl dark:bg-gray-950">
         <Link href={"/course/" + slug}>
           <img
             src={thumbnailUrl || "/placeholder.png"}
@@ -44,7 +44,14 @@ export function CardCourse({
               <span> {formatPrice(price)} </span>
               تومان
             </span>
-            <Button>شرکت در دوره</Button>
+            <AddToCart
+              courseId={courseId}
+              title={title}
+              thumbnailUrl={thumbnailUrl}
+              instructorName={instructorName}
+              slug={slug}
+              price={price}
+            />
           </div>
         </div>
       </div>

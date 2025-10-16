@@ -181,6 +181,72 @@ export const progress = pgTable(
   },
   (table) => [unique("user_lesson_unique").on(table.userId, table.lessonId)]
 );
+// ========== cart ==========
+export const carts = pgTable("carts", {
+  id: uuid("id").primaryKey().defaultRandom(),
+
+  userId: text("user_id")
+    .notNull()
+    .references(() => users.id, { onDelete: "cascade" }),
+
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at")
+    .defaultNow()
+    .$onUpdate(() => new Date())
+    .notNull(),
+});
+export const cartItems = pgTable(
+  "cart_items",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+
+    cartId: uuid("cart_id")
+      .notNull()
+      .references(() => carts.id, { onDelete: "cascade" }),
+
+    courseId: uuid("course_id")
+      .notNull()
+      .references(() => courses.id, { onDelete: "cascade" }),
+
+    priceAtAddTime: integer("price_at_add_time").notNull(),
+
+    createdAt: timestamp("created_at").defaultNow().notNull(),
+  },
+  (table) => [
+    unique("cart_course_unique").on(table.cartId, table.courseId), // جلوگیری از آیتم تکراری
+  ]
+);
+
+// 2️⃣ جدول پرداخت‌ها
+export const payments = pgTable("payments", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  userId: text("user_id")
+    .notNull()
+    .references(() => users.id, { onDelete: "cascade" }),
+
+  cartId: uuid("cart_id") // 👈 این خط جدید اضافه میشه
+    .references(() => carts.id, { onDelete: "set null" }),
+
+  amount: integer("amount").notNull(),
+  provider: varchar("provider", { length: 50 }).notNull(),
+  status: paymentStatusEnum("status").default("pending").notNull(),
+  authority: varchar("authority", { length: 100 }),
+  refId: varchar("ref_id", { length: 100 }),
+  message: text("message"),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+});
+
+export const paymentLogs = pgTable("payment_logs", {
+  id: uuid("id").primaryKey().defaultRandom(),
+
+  paymentId: uuid("payment_id")
+    .notNull()
+    .references(() => payments.id, { onDelete: "cascade" }),
+
+  status: paymentStatusEnum("status").notNull(),
+  responseData: text("response_data"), // JSON از پاسخ درگاه
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+});
 
 // ========== REVIEWS ==========
 export const reviews = pgTable("reviews", {
@@ -303,5 +369,43 @@ export const reviewRelations = relations(reviews, ({ one }) => ({
   course: one(courses, {
     fields: [reviews.courseId],
     references: [courses.id],
+  }),
+}));
+
+export const cartRelations = relations(carts, ({ many, one }) => ({
+  items: many(cartItems),
+  user: one(users, {
+    fields: [carts.userId],
+    references: [users.id],
+  }),
+}));
+
+export const cartItemRelations = relations(cartItems, ({ one }) => ({
+  cart: one(carts, {
+    fields: [cartItems.cartId],
+    references: [carts.id],
+  }),
+  course: one(courses, {
+    fields: [cartItems.courseId],
+    references: [courses.id],
+  }),
+}));
+
+export const paymentRelations = relations(payments, ({ one, many }) => ({
+  user: one(users, {
+    fields: [payments.userId],
+    references: [users.id],
+  }),
+  cart: one(carts, {
+    fields: [payments.cartId],
+    references: [carts.id],
+  }),
+  logs: many(paymentLogs),
+}));
+
+export const paymentLogRelations = relations(paymentLogs, ({ one }) => ({
+  payment: one(payments, {
+    fields: [paymentLogs.paymentId],
+    references: [payments.id],
   }),
 }));
