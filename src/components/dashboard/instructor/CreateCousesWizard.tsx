@@ -9,7 +9,7 @@ export interface CourseType {
   title: string;
   description: string | null;
   slug: string;
-  price: string; // تغییر به number برای هماهنگی با خروجی اسکیما
+  price: string | number | null; // تغییر به number برای هماهنگی با خروجی اسکیما
   thumbnailUrl: string | null;
   status: "ongoing" | "completed" | "preorder";
   isPublished: boolean;
