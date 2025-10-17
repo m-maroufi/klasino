@@ -35,6 +35,9 @@ yarn-error.log*
 
 # vercel
 .vercel
+# نادیده گرفتن فایل‌های Middleware
+src/middleware.ts
+src/middleware.js
 
 # typescript
 *.tsbuildinfo
