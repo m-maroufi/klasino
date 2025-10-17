@@ -16,6 +16,8 @@ interface ICartStore {
   clearCart: () => { success: boolean; message: string };
   totalPrice: number;
   itemCount: number;
+  updateItems: (items: CourseItem[]) => void;
+  isPurchasedItem: (courseId: string) => boolean; // بررسی خرید قبلی
 }
 // ایجاد store
 export const useCartStore = create<ICartStore>()(
@@ -81,6 +83,21 @@ export const useCartStore = create<ICartStore>()(
           success: true,
           message: "سبد خرید پاک شد",
         };
+      },
+      updateItems: (items: CourseItem[]) => {
+        set({
+          items,
+          totalPrice: items.reduce(
+            (sum, course) => sum + (course.price ?? 0),
+            0
+          ),
+          itemCount: items.length,
+        });
+      },
+      isPurchasedItem: (courseId: string) => {
+        // منطق بررسی خرید قبلی (می‌تونی از API یا localStorage استفاده کنی)
+        // فعلاً false برمی‌گردونه، باید با API جایگزین بشه
+        return false;
       },
     }),
     {

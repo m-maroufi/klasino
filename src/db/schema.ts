@@ -181,13 +181,23 @@ export const progress = pgTable(
   },
   (table) => [unique("user_lesson_unique").on(table.userId, table.lessonId)]
 );
-// ========== cart ==========
-export const carts = pgTable("carts", {
+
+// ========== ORDERS ==========
+export const orders = pgTable("orders", {
   id: uuid("id").primaryKey().defaultRandom(),
 
   userId: text("user_id")
     .notNull()
     .references(() => users.id, { onDelete: "cascade" }),
+
+  totalAmount: integer("total_amount").notNull(), // مجموع مبلغ سبد خرید
+  discountAmount: integer("discount_amount").default(0).notNull(), // تخفیف احتمالی
+  finalAmount: integer("final_amount").notNull(), // مبلغ نهایی پس از تخفیف
+
+  status: paymentStatusEnum("status").default("pending").notNull(), // وضعیت سفارش (pending | paid | failed)
+
+  // اگر خواستی آیتم‌ها رو در JSON نگه داری (برای حفظ snapshot از سبد خرید)
+  items: text("items").notNull(), // JSON.stringify(cartItems)
 
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at")
@@ -195,57 +205,33 @@ export const carts = pgTable("carts", {
     .$onUpdate(() => new Date())
     .notNull(),
 });
-export const cartItems = pgTable(
-  "cart_items",
-  {
-    id: uuid("id").primaryKey().defaultRandom(),
 
-    cartId: uuid("cart_id")
-      .notNull()
-      .references(() => carts.id, { onDelete: "cascade" }),
-
-    courseId: uuid("course_id")
-      .notNull()
-      .references(() => courses.id, { onDelete: "cascade" }),
-
-    priceAtAddTime: integer("price_at_add_time").notNull(),
-
-    createdAt: timestamp("created_at").defaultNow().notNull(),
-  },
-  (table) => [
-    unique("cart_course_unique").on(table.cartId, table.courseId), // جلوگیری از آیتم تکراری
-  ]
-);
-
-// 2️⃣ جدول پرداخت‌ها
+// ========== PAYMENTS ==========
 export const payments = pgTable("payments", {
   id: uuid("id").primaryKey().defaultRandom(),
+
+  orderId: uuid("order_id")
+    .notNull()
+    .references(() => orders.id, { onDelete: "cascade" }),
+
   userId: text("user_id")
     .notNull()
     .references(() => users.id, { onDelete: "cascade" }),
 
-  cartId: uuid("cart_id") // 👈 این خط جدید اضافه میشه
-    .references(() => carts.id, { onDelete: "set null" }),
-
+  provider: varchar("provider", { length: 50 }).notNull(), // مثلا "zibal"
   amount: integer("amount").notNull(),
-  provider: varchar("provider", { length: 50 }).notNull(),
+
   status: paymentStatusEnum("status").default("pending").notNull(),
-  authority: varchar("authority", { length: 100 }),
-  refId: varchar("ref_id", { length: 100 }),
+
+  authority: varchar("authority", { length: 100 }), // شناسه تراکنش در درگاه
+  refId: varchar("ref_id", { length: 100 }), // کد رهگیری نهایی درگاه
   message: text("message"),
+
   createdAt: timestamp("created_at").defaultNow().notNull(),
-});
-
-export const paymentLogs = pgTable("payment_logs", {
-  id: uuid("id").primaryKey().defaultRandom(),
-
-  paymentId: uuid("payment_id")
-    .notNull()
-    .references(() => payments.id, { onDelete: "cascade" }),
-
-  status: paymentStatusEnum("status").notNull(),
-  responseData: text("response_data"), // JSON از پاسخ درگاه
-  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at")
+    .defaultNow()
+    .$onUpdate(() => new Date())
+    .notNull(),
 });
 
 // ========== REVIEWS ==========
@@ -290,6 +276,28 @@ export const courseCategories = pgTable(
   ]
 );
 
+// جدول discounts
+export const discounts = pgTable("discounts", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  code: text("code").notNull().unique(), // کد تخفیف (مثل "summer20")
+  discountAmount: integer("discount_amount").notNull(), // میزان تخفیف (مثل 20 برای 20%)
+  userId: text("user_id")
+    .notNull()
+    .references(() => users.id, { onDelete: "cascade" }), // کاربر ایجادکننده
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at")
+    .defaultNow()
+    .$onUpdate(() => new Date())
+    .notNull(),
+});
+
+// روابط
+export const discountRelations = relations(discounts, ({ one }) => ({
+  user: one(users, {
+    fields: [discounts.userId],
+    references: [users.id],
+  }),
+}));
 // ================= RELATIONS =================
 
 // --- User relations ---
@@ -372,40 +380,23 @@ export const reviewRelations = relations(reviews, ({ one }) => ({
   }),
 }));
 
-export const cartRelations = relations(carts, ({ many, one }) => ({
-  items: many(cartItems),
+// --- Order relations ---
+export const orderRelations = relations(orders, ({ one, many }) => ({
   user: one(users, {
-    fields: [carts.userId],
+    fields: [orders.userId],
     references: [users.id],
   }),
+  payments: many(payments),
 }));
 
-export const cartItemRelations = relations(cartItems, ({ one }) => ({
-  cart: one(carts, {
-    fields: [cartItems.cartId],
-    references: [carts.id],
+// --- Payment relations ---
+export const paymentRelations = relations(payments, ({ one }) => ({
+  order: one(orders, {
+    fields: [payments.orderId],
+    references: [orders.id],
   }),
-  course: one(courses, {
-    fields: [cartItems.courseId],
-    references: [courses.id],
-  }),
-}));
-
-export const paymentRelations = relations(payments, ({ one, many }) => ({
   user: one(users, {
     fields: [payments.userId],
     references: [users.id],
-  }),
-  cart: one(carts, {
-    fields: [payments.cartId],
-    references: [carts.id],
-  }),
-  logs: many(paymentLogs),
-}));
-
-export const paymentLogRelations = relations(paymentLogs, ({ one }) => ({
-  payment: one(payments, {
-    fields: [paymentLogs.paymentId],
-    references: [payments.id],
   }),
 }));

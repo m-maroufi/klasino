@@ -6,7 +6,13 @@ import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 import { BookOpenText, MessageCircleCode } from "lucide-react";
 import { useState } from "react";
-const TabCourse = ({ courseSlug }: { courseSlug: string }) => {
+const TabCourse = ({
+  courseSlug,
+  checkedPurchased,
+}: {
+  courseSlug: string;
+  checkedPurchased: boolean;
+}) => {
   const [activeTab, setActiveTab] = useState("profile");
   return (
     <ReactQueryProvider>
@@ -32,7 +38,10 @@ const TabCourse = ({ courseSlug }: { courseSlug: string }) => {
           className={activeTab === "profile" ? "block my-5" : "hidden my-3"}
           dir="rtl"
         >
-          <CourseVideosSection slug={courseSlug} />
+          <CourseVideosSection
+            slug={courseSlug}
+            checkedPurchased={checkedPurchased}
+          />
         </div>
         <div
           className={activeTab === "security" ? "block" : "hidden"}

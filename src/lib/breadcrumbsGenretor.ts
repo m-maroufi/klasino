@@ -4,7 +4,7 @@ export interface BreadcrumbsItem {
 }
 
 const labelMapRecord: Record<string, string> = {
-  course: "دوره ها",
+  course: "دوره‌ها",
   blog: "وبلاگ",
   about: "درباره ما",
   contact_us: "تماس با ما",
@@ -12,9 +12,15 @@ const labelMapRecord: Record<string, string> = {
   cart: "سبد خرید",
 };
 
-export function breadcrumbsGenrator(pathname: string): BreadcrumbsItem[] {
-  const segments = pathname.split("/").filter(Boolean);
+// نگاشت استاتیک برای دوره‌ها (جایگزین API یا هوک)
+const courseMap: Record<string, string> = {
+  "آموزش-حرفه‌ای-جاوااسکریپت": "آموزش حرفه‌ای جاوااسکریپت",
+  "آموزش-پایتون": "آموزش پایتون",
+  // سایر دوره‌ها رو می‌تونید اینجا اضافه کنید
+};
 
+export function breadcrumbsGenerator(pathname: string): BreadcrumbsItem[] {
+  const segments = pathname.split("/").filter(Boolean);
   const breadcrumbs: BreadcrumbsItem[] = [{ href: "/", label: "خانه" }];
 
   let currentPath = "";
@@ -24,7 +30,9 @@ export function breadcrumbsGenrator(pathname: string): BreadcrumbsItem[] {
 
     let label = labelMapRecord[segment];
     if (!label) {
-      label = decodeURIComponent(segment).replace(/_/g, " ");
+      // بررسی نگاشت دوره‌ها
+      label =
+        courseMap[segment] || decodeURIComponent(segment).replace(/-/g, " ");
     }
 
     breadcrumbs.push({ label, href: currentPath });

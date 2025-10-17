@@ -1,4 +1,5 @@
 "use server";
+import { discounts } from "@/db/schema";
 import { count, desc, eq, sql } from "drizzle-orm";
 import db from "./index";
 import { categories, courses, purchases, reviews, users } from "./schema";
@@ -188,6 +189,35 @@ export async function getCourseById(id: string) {
       success: false,
       message: "خطایی در دریافت اطلاعات دوره رخ داد.",
       data: null,
+    };
+  }
+}
+
+export async function checkDiscountCode(code: string) {
+  try {
+    const discount = await db
+      .select()
+      .from(discounts)
+      .where(eq(discounts.code, code))
+      .limit(1);
+
+    if (discount.length === 0) {
+      return {
+        success: false,
+        statusCode: 404,
+        discount: null,
+      };
+    }
+    return {
+      success: false,
+      statusCode: 200,
+      discount: discount[0],
+    }; // { id, code, discountAmount, userId, createdAt, updatedAt }
+  } catch (error) {
+    return {
+      success: false,
+      statusCode: 500,
+      discount: null,
     };
   }
 }

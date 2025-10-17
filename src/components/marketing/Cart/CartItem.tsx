@@ -41,7 +41,7 @@ const CartItem = ({ onRemove, item }: ICartItemProps) => {
     <li className="flex relative gap-4 justify-center items-center flex-col sm:flex-row border p-3 rounded-3xl bg-white">
       <div className="img relative h-25 w-25 rounded-xl overflow-hidden">
         <Image
-          src={`${item.image}`}
+          src={`${item.image}` || ""}
           alt={item.title}
           fill
           className="absolute"

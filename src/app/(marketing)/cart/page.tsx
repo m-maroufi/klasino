@@ -9,6 +9,7 @@ export default async function CartPage() {
   const session = await auth.api.getSession({
     headers: await headers(),
   });
+
   return (
     <div className="min-h-screen pt-30 pb-10">
       <div className="container space-y-5">

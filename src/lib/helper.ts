@@ -7,18 +7,18 @@ export function formatPrice(price: number | null) {
 export function sleep(ms: number) {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
-
-export function formatDurationReadable(seconds: number): string {
-  if (!seconds || seconds <= 0) {
+export function formatDurationReadable(minutes: number | null): string {
+  if (!minutes || minutes <= 0) {
     return "نامشخص";
   }
-  const hrs = Math.floor(seconds / 3600);
-  const mins = Math.floor((seconds % 3600) / 60);
+
+  const hrs = Math.floor(minutes / 60);
+  const mins = Math.floor(minutes % 60);
 
   if (hrs > 0 && mins > 0) return `${hrs} ساعت و ${mins} دقیقه`;
   if (hrs > 0) return `${hrs} ساعت`;
   if (mins > 0) return `${mins} دقیقه`;
-  return `${seconds} ثانیه`;
+  return "کمتر از یک دقیقه";
 }
 export function slugify(title: string): string {
   return title

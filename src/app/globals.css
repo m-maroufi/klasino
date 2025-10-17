@@ -293,3 +293,104 @@
 .animate-fade-in {
   animation: fade-in 0.8s ease-out;
 }
+
+.course-description {
+  line-height: 1.6;
+  color: #4b5563; /* gray-600 */
+  font-family: "vazir", sans-serif;
+  font-size: 0.875rem; /* text-sm */
+}
+
+.course-description p {
+  margin-bottom: 0.75rem;
+}
+
+.course-description h1,
+.course-description h2,
+.course-description h3,
+.course-description h4,
+.course-description h5,
+.course-description h6 {
+  font-weight: 600;
+  color: #1f2937; /* gray-800 */
+  margin-top: 1rem;
+  margin-bottom: 0.5rem;
+}
+
+.course-description h1 {
+  font-size: 1.5rem;
+}
+.course-description h2 {
+  font-size: 1.25rem;
+}
+.course-description h3 {
+  font-size: 1.125rem;
+}
+.course-description h4 {
+  font-size: 1rem;
+}
+.course-description h5 {
+  font-size: 0.875rem;
+}
+.course-description h6 {
+  font-size: 0.75rem;
+}
+
+.course-description ul,
+.course-description ol {
+  margin-bottom: 0.75rem;
+  padding-right: 1.5rem;
+}
+
+.course-description li {
+  margin-bottom: 0.5rem;
+  position: relative;
+}
+
+.course-description ul li::before {
+  content: "•";
+  position: absolute;
+  right: -1rem;
+  color: #6366f1; /* indigo-500 */
+  font-size: 1rem;
+}
+
+.course-description ol li::before {
+  content: counter(list-item) ".";
+  position: absolute;
+  right: -1.5rem;
+  color: #6366f1; /* indigo-500 */
+  font-size: 0.875rem;
+}
+
+.course-description strong {
+  font-weight: 700;
+  color: #111827; /* gray-900 */
+}
+
+.course-description a {
+  color: #6366f1; /* indigo-500 */
+  text-decoration: none;
+  transition: color 0.2s ease-in-out;
+}
+
+.course-description a:hover {
+  color: #4f46e5; /* indigo-600 */
+  text-decoration: underline;
+}
+
+.course-description blockquote {
+  border-right: 4px solid #e5e7eb; /* gray-200 */
+  padding-right: 1rem;
+  margin: 1rem 0;
+  color: #374151; /* gray-700 */
+  font-style: italic;
+}
+
+.course-description code {
+  background-color: #f3f4f6; /* gray-100 */
+  padding: 0.2rem 0.4rem;
+  border-radius: 0.25rem;
+  font-family: "vazir", monospace;
+  font-size: 0.75rem;
+}
