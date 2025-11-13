@@ -93,27 +93,27 @@ export const menusDashboard: { [role: string]: MenuGroup[] } = {
         {
           label: "Dashboard",
           fa_label: "داشبورد",
-          path: "/user",
+          path: "/student",
           // icon: Home,
         },
         {
           label: "Account",
           fa_label: "حساب کاربری",
-          path: "/user/account",
+          path: "/student/account",
           // icon: User,
           subMenus: [
             {
               label: "Profile",
               fa_label: "پروفایل",
-              path: "/user/profile",
+              path: "/student/profile",
               // icon: User,
             },
-            {
-              label: "Settings",
-              fa_label: "تنظیمات",
-              path: "/user/settings",
-              // icon: Settings,
-            },
+            // {
+            //   label: "Settings",
+            //   fa_label: "تنظیمات",
+            //   path: "/student/settings",
+            //   // icon: Settings,
+            // },
           ],
         },
       ],

@@ -1,12 +1,23 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  /* config options here */
-
   images: {
     remotePatterns: [
-      new URL("https://codeyad.com/_ipx/**"),
-      new URL("https://i.ibb.co/**"),
+      {
+        protocol: "https",
+        hostname: "codeyad.com",
+        pathname: "/_ipx/**",
+      },
+      {
+        protocol: "https",
+        hostname: "i.ibb.co",
+        pathname: "/**",
+      },
+      {
+        protocol: "https",
+        hostname: "images.unsplash.com",
+        pathname: "/**",
+      },
     ],
   },
 };
